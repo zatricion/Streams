@@ -1,0 +1,13 @@
+application: {{ name }}
+version: uno
+runtime: python27
+api_version: 1
+threadsafe: false
+
+libraries:
+- name: numpy
+  version: "1.6.1"
+
+handlers:
+- url: /.*
+  script: input.py

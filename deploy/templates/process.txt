@@ -1,0 +1,23 @@
+from core.Stream import Stream
+from core.Sender import Sender
+from core.AgentProcess import AgentProcess
+from core.Agent import *
+
+def process_contents(ext_in_stream_list, ext_out_stream_list):
+    stream_names = {{ streams }}
+    internal_streams = {stream : Stream(stream, '{{ name }}') for stream in stream_names}
+
+    ext_in_stream_dict = {s.name : s for s in ext_in_stream_list}
+    ext_out_stream_dict = {s.name : s for s in ext_out_stream_list}
+
+    {% for agent in agents %}
+    {{ agent | indent }}
+    {% endfor %}
+
+external_in_streams = {{ external_in_streams }}
+external_out_streams = {{ external_out_streams }}
+
+{{ name }} = AgentProcess('{{ name }}', 
+                          external_in_streams,
+                          external_out_streams,
+                          process_contents)

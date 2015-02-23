@@ -1,0 +1,139 @@
+import time
+import math
+import multiprocessing as mp
+from core.FileToStream import FileToStream, JSONFileToStream, FileOrchestrator
+from core.Stream import Stream
+from core.Sender import Sender
+from core.AgentProcess import AgentProcess
+from core.Agent import *
+
+{% if external_processes %}
+from oauth2client import gce
+from apiclient.discovery import build
+import httplib2
+import time
+import base64
+import cPickle
+
+def get_tq():
+    credentials = gce.AppAssertionCredentials('')
+    http = httplib2.Http()
+    http=credentials.authorize(http)
+    credentials.refresh(http)
+    service = build('taskqueue', 'v1beta2', http=http)
+    tq = service.tasks()
+    return tq
+
+class TaskQueueReceiver(mp.Process):
+    def __init__(self, instance, streams_to_procs, tq):
+        mp.Process.__init__(self)
+        self.instance = instance
+        self.streams_to_procs = streams_to_procs
+        self.tq = tq
+
+    def run(self):
+        while True:
+            resp = self.tq.lease(project="s~anomaly-gce",
+                                  taskqueue="messaging",
+                                  numTasks=500,
+                                  leaseSecs=600,
+                                  groupByTag=True,
+                                  tag=self.instance).execute()
+            if 'items' not in resp: continue
+            tasks = resp['items']
+            for task in tasks:
+                stream, value = cPickle.loads(
+                                    base64.urlsafe_b64decode(
+                                            task['payloadBase64'].encode('utf-8')))
+                for proc in self.streams_to_procs[stream]:
+                    proc.iq.put((stream, value))
+                self.tq.delete(project="s~anomaly-gce",
+                               taskqueue="messaging",
+                               task=task['id']).execute()
+            if all(p.closed for p_list in self.streams_to_procs.values() for p in p_list):
+                break
+{% endif %}
+
+def main():
+    modules = dict()    
+    in_streams_dict = {{ in_streams_dict }}
+    out_streams_dict = {{ out_streams_dict }}
+    external_in_streams = {{ external_in_streams }}
+    external_out_streams = {{ external_out_streams }}
+    external_processes = {{ external_processes }}
+    
+    {% for proc in processes %}
+    from {{ process_dir }}.{{ proc.name }} import {{ proc.name }}
+    modules['{{ proc.name }}'] = {{ proc.name }}
+    {% endfor %}
+    
+    ### Connect modules
+    for stream, from_module in out_streams_dict.iteritems():
+        if stream in in_streams_dict:
+            to_module_list = in_streams_dict[stream]
+            for to_module in to_module_list:
+                if from_module != to_module:
+                    modules[from_module].connect_ostream_to_q(stream, modules[to_module].iq)
+    
+    ### Connect output
+    output_q = mp.Queue()
+    for stream in external_out_streams:
+        m_name = out_streams_dict[stream]
+        modules[m_name].connect_ostream_to_q(stream, output_q)
+    
+    ### Start modules
+    for m in modules.values():
+        m.start()
+    
+    ### Processes in this instance
+    local_procs = list(set(modules.keys()) - set(external_processes))
+    
+    in_streams_to_procs = {stream: map(lambda x: modules[x], 
+                                       filter(lambda x: x in local_procs, proc_name_list))
+                                for stream, proc_name_list in in_streams_dict.items()}
+    
+    ### Receive from task queue
+    if external_processes:
+        TaskQueueReceiver('{{ instance }}', in_streams_to_procs, get_tq()).start()
+    
+    file_to_stream_list = []
+    ### Hardcoded I/O, name input files <<stream_name>>
+    for stream in external_in_streams:
+        if stream in in_streams_to_procs:
+            proc_list = in_streams_to_procs[stream]
+            for proc in proc_list:
+                s = Stream(stream, "Main")
+                if stream.endswith('json'):
+                    f = JSONFileToStream(stream, s)
+                else:
+                    f = FileToStream(stream, s)
+                f.send_to(proc.iq)
+                file_to_stream_list.append(f)
+    
+    output_proc = mp.Process(target=get_output, args=(output_q,))
+    output_proc.start()
+    
+    # randomly read from files
+    FileOrchestrator(file_to_stream_list).signal()
+    output_proc.join()
+
+def get_output(output_q):
+    count = 0
+    while True:
+        next = output_q.get()
+        count += 1
+        stream_name, msg_value = next
+        if msg_value == "CLOSE_STREAM":
+            break
+        print count, "stream_name, msg_value", stream_name, msg_value
+        {% if external_processes %}
+        tq = get_tq()
+        tq.insert(project="s~anomaly-gce",
+                  taskqueue="output",
+                  body={"kind": "taskqueues#task",
+                        "payloadBase64": base64.b64encode(str(msg_value)),
+                        "queueName": "output"}).execute()
+        {% endif %}
+
+if __name__ == "__main__": 
+    main()

@@ -1,0 +1,44 @@
+in_stream_names = {{ in_streams | safe }}
+out_stream_names = {{ out_streams | safe }}
+
+{{ name }}_in_streams = []
+for name in in_stream_names:
+    if name in ext_in_stream_dict:
+        stream = ext_in_stream_dict[name]
+    elif name in ext_out_stream_dict:
+        stream = ext_out_stream_dict[name]
+    else:
+        stream = internal_streams[name]
+    {{ name }}_in_streams.append(stream)
+    
+{{ name }}_out_streams= []
+for name in out_stream_names:
+    if name in ext_out_stream_dict:
+        stream = ext_out_stream_dict[name]
+    else:
+        stream = internal_streams[name]
+    {{ name }}_out_streams.append(stream)
+
+params = {}
+{% if parameters %}
+    {%- for key, value in parameters.iteritems() %}
+params['{{ key }}'] = {{ value }}
+    {%- endfor %}
+{% endif %}
+
+{% if imports %}
+{% for import in imports %}
+{{ import }}
+{% endfor %}
+{% endif %}
+
+{% if agent_type == "scikit" %}
+AgentParametric({{ name }}_in_streams, {{ name }}_out_streams, {{ name }}_in_streams,
+            {{ function }}, {{ algorithm }}(**params))
+{% endif %}
+
+{% if agent_type == "anomaly" %}
+AgentParametric({{ name }}_in_streams, {{ name }}_out_streams, {{ name }}_in_streams,
+            {{ function }}, params)
+{% endif %}
+
