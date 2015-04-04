@@ -17,7 +17,8 @@ def clone_deploy():
   with settings(prompts={'Are you sure you want to continue connecting (yes/no)? ' : 'yes'}):
     sudo('apt-get install -y git')
     run('git clone git@github.com:zatricion/Streams.git')
-    run('git checkout deployment')
+    with cd('Streams'):
+      run('git checkout deployment')
 
 def main():
   populate_hosts()
