@@ -24,11 +24,12 @@ def clone_deploy():
         run('git checkout deployment')
     else:
       with cd('Streams'):
-        run('git pull')
+        run('git pull'):
 
 @task
 def start_kademlia():
-  pass
+  with cd('Streams'):
+    run('')
 
 def main():
   populate_hosts()
