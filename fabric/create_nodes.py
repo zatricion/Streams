@@ -1,3 +1,4 @@
+
 from fabric.api import *
 import fabric.contrib.files as fabfiles
 
@@ -21,13 +22,25 @@ def clone_deploy():
       run('git clone git@github.com:zatricion/Streams.git')
       with cd('Streams'):
         run('git checkout deployment')
+    else:
+      with cd('Streams'):
+        run('git pull')
+
+@task
+def start_kademlia():
+  pass
 
 def main():
   populate_hosts()
 
   # Clone the repo and switch to deployment branch
-  execute(clone_deploy)
+  #execute(clone_deploy)
 
+  # get local ipv6 address for bootstrapping (deploying from macbook)
+  my_ipv6 = local('ifconfig | grep inet6 | grep temporary', capture=True).split()[1]
+  
+  # start Kademlia network
+  execute(start_kademlia) 
 
 if __name__ == '__main__':
   main()
