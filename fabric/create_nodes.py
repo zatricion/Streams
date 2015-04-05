@@ -1,4 +1,5 @@
 from fabric.api import *
+import fabric.contrib.files as fabfiles
 
 HOSTS = 'hosts.txt'
 env.forward_agent = True
@@ -16,9 +17,10 @@ def populate_hosts():
 def clone_deploy():
   with settings(prompts={'Are you sure you want to continue connecting (yes/no)? ' : 'yes'}):
     sudo('apt-get install -y git')
-    run('git clone git@github.com:zatricion/Streams.git')
-    with cd('Streams'):
-      run('git checkout deployment')
+    if not fabfiles.exists('Streams'):
+      run('git clone git@github.com:zatricion/Streams.git')
+      with cd('Streams'):
+        run('git checkout deployment')
 
 def main():
   populate_hosts()
