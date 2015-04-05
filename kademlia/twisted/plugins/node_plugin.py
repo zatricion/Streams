@@ -34,9 +34,9 @@ class NodeServiceMaker(object):
       kserver = Server.loadState('cache.pickle')
     else:
       kserver = Server()
-      kserver.bootstrap([options["bootstrap"], int(options["port"])])
       kserver.saveStateRegularly('cache.pickle', 10)
 
+    kserver.bootstrap([options["bootstrap"], int(options["port"])])
     server = internet.UDPServer(int(options["port"]), kserver.protocol)
     server.setServiceParent(application)
     

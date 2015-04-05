@@ -14,8 +14,9 @@ if os.path.isfile('cache.pickle'):
     kserver = Server.loadState('cache.pickle')
 else:
     kserver = Server()
-    kserver.bootstrap([("10.0.1.59", 8468)])
+
+kserver.bootstrap(["2601:8:ac00:b8d:ba27:ebff:feb0:6365", 5768])
 kserver.saveStateRegularly('cache.pickle', 10)
 
-server = internet.UDPServer(8468, kserver.protocol)
+server = internet.UDPServer(5768, kserver.protocol)
 server.setServiceParent(application)

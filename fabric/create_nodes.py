@@ -24,24 +24,24 @@ def clone_deploy():
         run('git checkout deployment')
     else:
       with cd('Streams'):
-        run('git pull'):
+        run('git pull')
 
 @task
-def start_kademlia():
-  with cd('Streams'):
-    run('')
+def start_kademlia(ip, port=None):
+  with cd('Streams/kademlia'):
+    run('twistd -n node -b {0} -p {1}'.format(ip, port))
 
 def main():
   populate_hosts()
 
   # Clone the repo and switch to deployment branch
-  #execute(clone_deploy)
+  execute(clone_deploy)
 
   # get local ipv6 address for bootstrapping (deploying from macbook)
   my_ipv6 = local('ifconfig | grep inet6 | grep temporary', capture=True).split()[1]
   
   # start Kademlia network
-  execute(start_kademlia) 
+  execute(start_kademlia, my_ipv6, 5768) 
 
 if __name__ == '__main__':
   main()
