@@ -2,7 +2,7 @@
 from fabric.api import *
 import fabric.contrib.files as fabfiles
 
-HOSTS = 'hosts.txt'
+HOSTS = 'hosts_ipv4.txt'
 env.forward_agent = True
 env.key_filename = '~/.ssh/streams_deploy'
 env.abort_on_prompts = True
@@ -42,7 +42,7 @@ def main():
   my_ipv6 = local('ifconfig | grep inet6 | grep temporary', capture=True).split()[1]
   
   # start Kademlia network
-  execute(start_kademlia, my_ipv6, 7000) 
+  execute(start_kademlia, my_ipv6, 5768) 
 
 if __name__ == '__main__':
   main()

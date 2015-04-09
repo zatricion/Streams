@@ -1,0 +1,4 @@
+# later on there will be a way to use public keys instead of passwords
+# username@ipv6_address password
+
+pi@10.0.1.7 raspberry

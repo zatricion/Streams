@@ -16,7 +16,8 @@ def bootstrapDone(found, server):
     server.set("a key", "a value").addCallback(setDone, server)
 
 server = Server()
-server.listen(8468)
-server.bootstrap([("1.2.3.4", 8468)]).addCallback(bootstrapDone, server)
+server.listen(7000)
+# server.bootstrap([("10.0.1.7", 7000)]).addCallback(bootstrapDone, server)
+server.bootstrap([("10.0.1.7", 7000)])
 
 reactor.run()
