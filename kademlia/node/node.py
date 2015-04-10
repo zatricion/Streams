@@ -7,13 +7,16 @@ sys.path.append(os.path.dirname(__file__))
 from kademlia.network import Server
 from kademlia import log
 
-# Easy configuration
+def print_call(result):
+    print result
 
 def setDone(result, server):
-    server.get("a key")
+    print server.get("beach")
+    print server.get("a key").addCallback(print_call)
 
 def bootstrapDone(found, server):
-    server.set("a key", "a value").addCallback(setDone, server)
+    server.set("a key", "a value")
+    server.set("beach", "playa").addCallback(setDone, server)
 
 def makeService(config):
     kserver = Server()

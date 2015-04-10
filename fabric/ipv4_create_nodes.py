@@ -38,11 +38,11 @@ def main():
   # Clone the repo and switch to deployment branch
   execute(clone_deploy)
 
-  # get local ipv6 address for bootstrapping (deploying from macbook)
-  my_ipv6 = local('ifconfig | grep inet6 | grep temporary', capture=True).split()[1]
+  # get local ipv4 address for bootstrapping (deploying from macbook)
+  my_ipv4 = local('ipconfig getifaddr en0', capture=True)
   
   # start Kademlia network
-  execute(start_kademlia, my_ipv6, 5768) 
+  execute(start_kademlia, my_ipv4, 7000) 
 
 if __name__ == '__main__':
   main()
