@@ -17,7 +17,16 @@ def populate_hosts():
 @task
 def clone_deploy():
   with settings(prompts={'Are you sure you want to continue connecting (yes/no)? ' : 'yes'}):
+    # get git
     sudo('apt-get install -y git')
+    
+    # get pip
+    sudo('apt-get install -y curl')
+    if not fabfiles.exists('get-pip.py'):
+      sudo('curl -O https://bootstrap.pypa.io/get-pip.py')
+    sudo('python get-pip.py')
+
+    # deploy streams
     if not fabfiles.exists('Streams'):
       run('git clone git@github.com:zatricion/Streams.git')
       with cd('Streams'):
@@ -26,6 +35,7 @@ def clone_deploy():
       with cd('Streams'):
         run('git fetch --all')
         run('git reset --hard origin/deployment')
+        run('pip install -r requirements.txt')
 
 @task
 def start_kademlia(ip, port=None):
