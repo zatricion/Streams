@@ -24,7 +24,7 @@ def clone_deploy():
     sudo('apt-get install -y curl')
     if not fabfiles.exists('get-pip.py'):
       sudo('curl -O https://bootstrap.pypa.io/get-pip.py')
-    sudo('python get-pip.py')
+      sudo('python get-pip.py')
 
     # deploy streams
     if not fabfiles.exists('Streams'):
@@ -35,7 +35,7 @@ def clone_deploy():
       with cd('Streams'):
         run('git fetch --all')
         run('git reset --hard origin/deployment')
-        run('pip install -r requirements.txt')
+        sudo('pip install -r requirements.txt')
 
 @task
 def start_kademlia(ip, port=None):
