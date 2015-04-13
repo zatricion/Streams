@@ -11,8 +11,8 @@ def print_call(result):
     print result
 
 def setDone(result, server):
-    print server.get("beach")
-    print server.get("a key").addCallback(print_call)
+    server.get("beach").addCallback(print_call)
+    server.get("a key").addCallback(print_call)
 
 def bootstrapDone(found, server):
     server.set("a key", "a value")

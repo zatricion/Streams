@@ -1,6 +1,9 @@
-
 from fabric.api import *
 import fabric.contrib.files as fabfiles
+
+RABBITMQ_USER = 'user1'
+RABBITMQ_PASS = 'pass1'
+RABBITMQ_VHOST = 'only'
 
 HOSTS = 'hosts_ipv4.txt'
 env.forward_agent = True
@@ -25,8 +28,21 @@ def clone_deploy():
     if not fabfiles.exists('get-pip.py'):
       sudo('curl -O https://bootstrap.pypa.io/get-pip.py')
       sudo('python get-pip.py')
+      
+    # get rabbitmq
+    sudo('apt-get install -y rabbitmq-server')
+    sudo('rabbitmq-plugins enable rabbitmq_federation')
+    sudo('rabbitmq-plugins enable rabbitmq_federation_management')
 
-    # deploy streams
+    # set up rabbitmq
+    if RABBITMQ_USER not in sudo('rabbitmqctl list_users').stdout:
+        sudo('rabbitmqctl add_user {0} {1}'.format(RABBITMQ_USER, RABBITMQ_PASS))
+        sudo('rabbitmqctl add_vhost {0}'.format(RABBITMQ_VHOST))
+        sudo('sudo rabbitmqctl set_permissions -p {0} {1} ".*" ".*" ".*"'.format(RABBITMQ_VHOST, 
+                                                                                 RABBITMQ_USER))
+
+
+# deploy streams
     if not fabfiles.exists('Streams'):
       run('git clone git@github.com:zatricion/Streams.git')
       with cd('Streams'):
@@ -36,6 +52,7 @@ def clone_deploy():
         run('git fetch --all')
         run('git reset --hard origin/deployment')
         sudo('pip install -r requirements.txt')
+
 
 @task
 def start_kademlia(ip, port=None):
