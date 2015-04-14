@@ -4,3 +4,4 @@ pandas==0.14.0
 pyparsing==2.0.1
 python-dateutil==2.2
 scipy==0.14.0
+msgpack-python==0.4.6

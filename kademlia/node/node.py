@@ -7,16 +7,11 @@ sys.path.append(os.path.dirname(__file__))
 from kademlia.network import Server
 from kademlia import log
 
-def print_call(result):
-    print result
-
-def setDone(result, server):
-    server.get("beach").addCallback(print_call)
-    server.get("a key").addCallback(print_call)
+import cove
 
 def bootstrapDone(found, server):
-    server.set("a key", "a value")
-    server.set("beach", "playa").addCallback(setDone, server)
+    cove.start()
+    cove.test.delay()
 
 def makeService(config):
     kserver = Server()

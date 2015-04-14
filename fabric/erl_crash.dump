@@ -1,5 +1,5 @@
 =erl_crash_dump:0.3
-Sun Apr 12 22:36:06 2015
+Mon Apr 13 22:45:04 2015
 Slogan: init terminating in do_boot ()
 System version: Erlang/OTP 17 [erts-6.1] [source] [64-bit] [smp:4:4] [async-threads:10] [hipe] [kernel-poll:false]
 Compiled: Tue Jan  6 10:16:02 2015
@@ -2281,7 +2281,7 @@ State: Running
 Name: init
 Spawned as: otp_ring0:start/2
 Spawned by: []
-Started: Sun Apr 12 22:36:06 2015
+Started: Mon Apr 13 22:45:04 2015
 Message queue length: 0
 Number of heap fragments: 0
 Heap fragment data: 0
@@ -2292,14 +2292,14 @@ OldHeap: 610
 Heap unused: 144
 OldHeap unused: 551
 Memory: 10600
-Program counter: 0x00000000138825e8 (init:boot_loop/2 + 64)
+Program counter: 0x00000000138025e8 (init:boot_loop/2 + 64)
 CP: 0x0000000000000000 (invalid)
 =proc:<0.1.0>
 State: Waiting
 Name: init__boot__on_load_handler
 Spawned as: erlang:apply/2
 Spawned by: <0.0.0>
-Started: Sun Apr 12 22:36:06 2015
+Started: Mon Apr 13 22:45:04 2015
 Message queue length: 0
 Number of heap fragments: 0
 Heap fragment data: 0
@@ -2309,7 +2309,7 @@ OldHeap: 0
 Heap unused: 222
 OldHeap unused: 0
 Memory: 2664
-Program counter: 0x000000001388ebb8 (init:on_load_loop/2 + 56)
+Program counter: 0x000000001380ebb8 (init:on_load_loop/2 + 56)
 CP: 0x0000000000000000 (invalid)
 arity = 0
 =proc:<0.3.0>
@@ -2317,7 +2317,7 @@ State: Waiting
 Name: erl_prim_loader
 Spawned as: erlang:apply/2
 Spawned by: <0.2.0>
-Started: Sun Apr 12 22:36:06 2015
+Started: Mon Apr 13 22:45:04 2015
 Message queue length: 0
 Number of heap fragments: 0
 Heap fragment data: 0
@@ -2328,7 +2328,7 @@ OldHeap: 987
 Heap unused: 563
 OldHeap unused: 958
 Memory: 21560
-Program counter: 0x00000000138d05e0 (erl_prim_loader:loop/3 + 176)
+Program counter: 0x00000000138505e0 (erl_prim_loader:loop/3 + 176)
 CP: 0x0000000000000000 (invalid)
 arity = 0
 =port:#Port<0.0>
@@ -2365,330 +2365,330 @@ Current size: 1912
 Module: prim_file
 Uniq: 36182161
 Index: 4
-Address: 0x00000000138bcb68
+Address: 0x000000001383cb68
 Native_address: 0x0000000010167a80
 Refc: 1
 =fun
 Module: prim_file
 Uniq: 36182161
 Index: 5
-Address: 0x00000000138bca60
+Address: 0x000000001383ca60
 Native_address: 0x0000000010167a80
 Refc: 1
 =fun
 Module: init
 Uniq: 117833615
 Index: 8
-Address: 0x000000001388f280
+Address: 0x000000001380f280
 Native_address: 0x0000000010167a90
 Refc: 1
 =fun
 Module: erl_prim_loader
 Uniq: 30916250
 Index: 0
-Address: 0x00000000138e0918
+Address: 0x0000000013860918
 Native_address: 0x0000000010167a90
 Refc: 1
 =fun
 Module: erl_prim_loader
 Uniq: 30916250
 Index: 1
-Address: 0x00000000138e07a0
+Address: 0x00000000138607a0
 Native_address: 0x0000000010167a90
 Refc: 1
 =fun
 Module: init
 Uniq: 117833615
 Index: 7
-Address: 0x000000001388f2d8
+Address: 0x000000001380f2d8
 Native_address: 0x0000000010167a90
 Refc: 2
 =fun
 Module: erl_prim_loader
 Uniq: 30916250
 Index: 2
-Address: 0x00000000138e0638
+Address: 0x0000000013860638
 Native_address: 0x0000000010167a90
 Refc: 1
 =fun
 Module: init
 Uniq: 117833615
 Index: 6
-Address: 0x000000001388f310
+Address: 0x000000001380f310
 Native_address: 0x0000000010167a90
 Refc: 1
 =fun
 Module: erl_prim_loader
 Uniq: 30916250
 Index: 3
-Address: 0x00000000138e04d0
+Address: 0x00000000138604d0
 Native_address: 0x0000000010167a90
 Refc: 1
 =fun
 Module: init
 Uniq: 117833615
 Index: 5
-Address: 0x000000001388f640
+Address: 0x000000001380f640
 Native_address: 0x0000000010167a60
 Refc: 1
 =fun
 Module: erl_prim_loader
 Uniq: 30916250
 Index: 4
-Address: 0x00000000138e0358
+Address: 0x0000000013860358
 Native_address: 0x0000000010167a90
 Refc: 1
 =fun
 Module: prim_zip
 Uniq: 67407319
 Index: 5
-Address: 0x00000000138cdfb8
+Address: 0x000000001384dfb8
 Native_address: 0x0000000010167a90
 Refc: 1
 =fun
 Module: init
 Uniq: 117833615
 Index: 4
-Address: 0x000000001388fa40
+Address: 0x000000001380fa40
 Native_address: 0x0000000010167a90
 Refc: 1
 =fun
 Module: erl_prim_loader
 Uniq: 30916250
 Index: 5
-Address: 0x00000000138e0220
+Address: 0x0000000013860220
 Native_address: 0x0000000010167a90
 Refc: 1
 =fun
 Module: prim_zip
 Uniq: 67407319
 Index: 4
-Address: 0x00000000138ce018
+Address: 0x000000001384e018
 Native_address: 0x0000000010167a90
 Refc: 1
 =fun
 Module: init
 Uniq: 117833615
 Index: 3
-Address: 0x000000001388fbc0
+Address: 0x000000001380fbc0
 Native_address: 0x0000000010167a80
 Refc: 1
 =fun
 Module: erl_prim_loader
 Uniq: 30916250
 Index: 6
-Address: 0x00000000138e00b8
+Address: 0x00000000138600b8
 Native_address: 0x0000000010167a90
 Refc: 1
 =fun
 Module: init
 Uniq: 117833615
 Index: 2
-Address: 0x000000001388fc20
+Address: 0x000000001380fc20
 Native_address: 0x0000000010167a80
 Refc: 1
 =fun
 Module: erl_prim_loader
 Uniq: 30916250
 Index: 7
-Address: 0x00000000138dff50
+Address: 0x000000001385ff50
 Native_address: 0x0000000010167a90
 Refc: 1
 =fun
 Module: prim_zip
 Uniq: 67407319
 Index: 6
-Address: 0x00000000138cdf60
+Address: 0x000000001384df60
 Native_address: 0x0000000010167a70
 Refc: 1
 =fun
 Module: init
 Uniq: 117833615
 Index: 1
-Address: 0x000000001388fc58
+Address: 0x000000001380fc58
 Native_address: 0x0000000010167a80
 Refc: 1
 =fun
 Module: erl_prim_loader
 Uniq: 30916250
 Index: 8
-Address: 0x00000000138dfde8
+Address: 0x000000001385fde8
 Native_address: 0x0000000010167a90
 Refc: 1
 =fun
 Module: prim_zip
 Uniq: 67407319
 Index: 1
-Address: 0x00000000138ce0f8
+Address: 0x000000001384e0f8
 Native_address: 0x0000000010167a70
 Refc: 1
 =fun
 Module: init
 Uniq: 117833615
 Index: 0
-Address: 0x000000001388fc90
+Address: 0x000000001380fc90
 Native_address: 0x0000000010167a80
 Refc: 1
 =fun
 Module: erl_prim_loader
 Uniq: 30916250
 Index: 9
-Address: 0x00000000138dfc80
+Address: 0x000000001385fc80
 Native_address: 0x0000000010167a90
 Refc: 1
 =fun
 Module: prim_zip
 Uniq: 67407319
 Index: 0
-Address: 0x00000000138ce150
+Address: 0x000000001384e150
 Native_address: 0x0000000010167a70
 Refc: 1
 =fun
 Module: erl_prim_loader
 Uniq: 30916250
 Index: 10
-Address: 0x00000000138dfb18
+Address: 0x000000001385fb18
 Native_address: 0x0000000010167a90
 Refc: 1
 =fun
 Module: prim_zip
 Uniq: 67407319
 Index: 3
-Address: 0x00000000138ce088
+Address: 0x000000001384e088
 Native_address: 0x0000000010167a70
 Refc: 1
 =fun
 Module: erl_prim_loader
 Uniq: 30916250
 Index: 11
-Address: 0x00000000138df9b0
+Address: 0x000000001385f9b0
 Native_address: 0x0000000010167a90
 Refc: 1
 =fun
 Module: prim_zip
 Uniq: 67407319
 Index: 2
-Address: 0x00000000138ce0c0
+Address: 0x000000001384e0c0
 Native_address: 0x0000000010167a70
 Refc: 1
 =fun
 Module: erl_prim_loader
 Uniq: 30916250
 Index: 12
-Address: 0x00000000138df930
+Address: 0x000000001385f930
 Native_address: 0x0000000010167a90
 Refc: 1
 =fun
 Module: erl_prim_loader
 Uniq: 30916250
 Index: 13
-Address: 0x00000000138df780
+Address: 0x000000001385f780
 Native_address: 0x0000000010167a70
 Refc: 1
 =fun
 Module: erl_prim_loader
 Uniq: 30916250
 Index: 14
-Address: 0x00000000138df1f0
+Address: 0x000000001385f1f0
 Native_address: 0x0000000010167a70
 Refc: 1
 =fun
 Module: erl_prim_loader
 Uniq: 30916250
 Index: 15
-Address: 0x00000000138def70
+Address: 0x000000001385ef70
 Native_address: 0x0000000010167a70
 Refc: 1
 =fun
 Module: erl_prim_loader
 Uniq: 30916250
 Index: 16
-Address: 0x00000000138deb80
+Address: 0x000000001385eb80
 Native_address: 0x0000000010167a70
 Refc: 1
 =fun
 Module: erlang
 Uniq: 120793660
 Index: 0
-Address: 0x00000000138fbd10
+Address: 0x000000001387bd10
 Native_address: 0x0000000010167a70
 Refc: 1
 =fun
 Module: erl_prim_loader
 Uniq: 30916250
 Index: 17
-Address: 0x00000000138deb50
+Address: 0x000000001385eb50
 Native_address: 0x0000000010167a90
 Refc: 1
 =fun
 Module: erl_prim_loader
 Uniq: 30916250
 Index: 18
-Address: 0x00000000138deb18
+Address: 0x000000001385eb18
 Native_address: 0x0000000010167a90
 Refc: 1
 =fun
 Module: erl_prim_loader
 Uniq: 30916250
 Index: 19
-Address: 0x00000000138de980
+Address: 0x000000001385e980
 Native_address: 0x0000000010167a70
 Refc: 1
 =fun
 Module: erl_prim_loader
 Uniq: 30916250
 Index: 20
-Address: 0x00000000138de788
+Address: 0x000000001385e788
 Native_address: 0x0000000010167a70
 Refc: 1
 =fun
 Module: prim_file
 Uniq: 36182161
 Index: 2
-Address: 0x00000000138bcd40
+Address: 0x000000001383cd40
 Native_address: 0x0000000010167a80
 Refc: 1
 =fun
 Module: prim_file
 Uniq: 36182161
 Index: 3
-Address: 0x00000000138bcd08
+Address: 0x000000001383cd08
 Native_address: 0x0000000010167a80
 Refc: 1
 =fun
 Module: prim_file
 Uniq: 36182161
 Index: 0
-Address: 0x00000000138bcdb0
+Address: 0x000000001383cdb0
 Native_address: 0x0000000010167a80
 Refc: 1
 =fun
 Module: prim_file
 Uniq: 36182161
 Index: 1
-Address: 0x00000000138bcd78
+Address: 0x000000001383cd78
 Native_address: 0x0000000010167a80
 Refc: 1
 =proc_stack:<0.0.0>
-0x0000000012d85d40:SReturn addr 0x10290D48 (<terminate process normally>)
+0x0000000011a85d40:SReturn addr 0x10290D48 (<terminate process normally>)
 =proc_heap:<0.0.0>
 =proc_stack:<0.1.0>
-0x0000000012d807d0:SReturn addr 0x10290D48 (<terminate process normally>)
+0x0000000011a807d0:SReturn addr 0x10290D48 (<terminate process normally>)
 y0:A5:false
 y1:N
 =proc_heap:<0.1.0>
 =proc_stack:<0.3.0>
-0x0000000012d8e738:SReturn addr 0x10290D48 (<terminate process normally>)
+0x0000000011a8e738:SReturn addr 0x10290D48 (<terminate process normally>)
 y0:N
-y1:H12D82BD0
+y1:H11A82BD0
 y2:P<0.2.0>
-y3:H12D8D538
+y3:H11A8D538
 y4:A8:infinity
 =proc_heap:<0.3.0>
-12D82BD0:lH12D82BE0|N
-12D82BE0:lI46|N
-12D8D538:t9:A5:state,A5:efile,N,A4:none,p<0.0>,A8:infinity,A9:undefined,A4:true,H12D82B58
-12D82B58:t4:AA:prim_state,A5:false,A9:undefined,A9:undefined
+11A82BD0:lH11A82BE0|N
+11A82BE0:lI46|N
+11A8D538:t9:A5:state,A5:efile,N,A4:none,p<0.0>,A8:infinity,A9:undefined,A4:true,H11A82B58
+11A82B58:t4:AA:prim_state,A5:false,A9:undefined,A9:undefined
 =atoms
 '/usr/local/Cellar/rabbitmq/3.5.1/erts-6.1/bin/../../erts-6.1/bin/../../bin/start.boot'
 'no -boot flag'
