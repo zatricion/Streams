@@ -42,6 +42,7 @@ def clone_deploy():
                                                                                  RABBITMQ_USER))
                                                                                  
         sudo('rabbitmqctl set_policy federate-me \'^amq\.\' \'{"federation-upstream-set":"all"}\'')
+        sudo('rabbitmq-server')
 
 
 # deploy streams
