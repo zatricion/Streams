@@ -23,6 +23,7 @@ class ExternalReceiver(mp.Process):
     
     def run(self):
         for stream, proc in self.streams_to_procs.items():
+            ## might need a proc for each of these
             cove.receive(stream, self.create_router(stream, proc))
 {% endif %}
 

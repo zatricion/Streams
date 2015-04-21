@@ -19,4 +19,4 @@ class Cove():
         self.channel.start_consuming()
 
     def unpack(self, message):
-        return msgpack.unpackb(message)
+        return msgpack.unpackb(message, use_list=False)
