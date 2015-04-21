@@ -7,16 +7,14 @@ sys.path.append(os.path.dirname(__file__))
 from kademlia.network import Server
 from kademlia import log
 
-import cove
+from cove import Cove
 
 def bootstrapDone(found, server):
     cove.start()
-    cove.test.delay()
 
 def makeService(config):
     kserver = Server()
     kserver.bootstrap([(config["bootstrap"], int(config["port"]))]).addCallback(bootstrapDone, kserver)
-    
-    h = internet.UDPServer(7000, kserver.protocol)
+  
+    return internet.UDPServer(7000, kserver.protocol)
 
-    return h

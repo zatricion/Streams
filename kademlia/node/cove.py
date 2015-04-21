@@ -1,16 +1,22 @@
-from __future__ import absolute_import, unicode_literals
+import pika
+import msgpack
 
-from celery.bin import worker as w
-from celery import current_app
-from celery import task
+class Cove():
+    def __init__(self, queues):
+        self.conn = pika.BlockingConnection(pika.ConnectionParameters('localhost'))
+        self.channel = self.conn.channel()
+        self.queues = queues
 
-@task
-def test():
-    print "hello"
+    def send(self, q_name, message):
+        self.channel.queue_declare(queue=q_name)
+        self.channel.basic_publish(exchange='',
+                                  routing_key=q_name,
+                                  body=msgpack.packb(message))
+  
+    def receive(self, q_name, callback):
+        self.channel.queue_declare(queue=q_name)    
+        self.channel.basic_consume(callback, queue=q_name, no_ack=False)
+        self.channel.start_consuming()
 
-def start():
-    app = current_app._get_current_object()
-    app.config_from_object('celeryconfig') 
-
-    worker = w.worker(app=app)
-    worker.run()
+    def unpack(self, message):
+        return msgpack.unpackb(message)

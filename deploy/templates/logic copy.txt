@@ -8,22 +8,50 @@ from core.AgentProcess import AgentProcess
 from core.Agent import *
 
 {% if external_processes %}
-from cove import Cove
+from oauth2client import gce
+from apiclient.discovery import build
+import httplib2
+import time
+import base64
+import cPickle
 
-class ExternalReceiver(mp.Process):
-    def __init__(self, instance, streams_to_procs):
+def get_tq():
+    credentials = gce.AppAssertionCredentials('')
+    http = httplib2.Http()
+    http=credentials.authorize(http)
+    credentials.refresh(http)
+    service = build('taskqueue', 'v1beta2', http=http)
+    tq = service.tasks()
+    return tq
+
+class TaskQueueReceiver(mp.Process):
+    def __init__(self, instance, streams_to_procs, tq):
         mp.Process.__init__(self)
         self.instance = instance
         self.streams_to_procs = streams_to_procs
-     
-    def create_router(self, stream, proc):
-        def router(ch, method, properties, body):
-            proc.iq.put((stream, cove.unpack(value)))
-        return router
-    
+        self.tq = tq
+
     def run(self):
-        for stream, proc in self.streams_to_procs.items():
-            cove.receive(stream, self.create_router(stream, proc))
+        while True:
+            resp = self.tq.lease(project="s~anomaly-gce",
+                                  taskqueue="messaging",
+                                  numTasks=500,
+                                  leaseSecs=600,
+                                  groupByTag=True,
+                                  tag=self.instance).execute()
+            if 'items' not in resp: continue
+            tasks = resp['items']
+            for task in tasks:
+                stream, value = cPickle.loads(
+                                    base64.urlsafe_b64decode(
+                                            task['payloadBase64'].encode('utf-8')))
+                for proc in self.streams_to_procs[stream]:
+                    proc.iq.put((stream, value))
+                self.tq.delete(project="s~anomaly-gce",
+                               taskqueue="messaging",
+                               task=task['id']).execute()
+            if all(p.closed for p_list in self.streams_to_procs.values() for p in p_list):
+                break
 {% endif %}
 
 def main():
@@ -66,7 +94,7 @@ def main():
     
     ### Receive from task queue
     if external_processes:
-        ExternalReceiver('{{ instance }}', in_streams_to_procs).start()
+        TaskQueueReceiver('{{ instance }}', in_streams_to_procs, get_tq()).start()
     
     file_to_stream_list = []
     ### Hardcoded I/O, name input files <<stream_name>>
@@ -90,10 +118,6 @@ def main():
     output_proc.join()
 
 def get_output(output_q):
-    % if external_processes %}
-    cove = Cove()
-    {% endif %}
-    
     count = 0
     while True:
         next = output_q.get()
@@ -103,7 +127,12 @@ def get_output(output_q):
             break
         print count, "stream_name, msg_value", stream_name, msg_value
         {% if external_processes %}
-        cove.send(stream, msg_value)
+        tq = get_tq()
+        tq.insert(project="s~anomaly-gce",
+                  taskqueue="output",
+                  body={"kind": "taskqueues#task",
+                        "payloadBase64": base64.b64encode(str(msg_value)),
+                        "queueName": "output"}).execute()
         {% endif %}
 
 if __name__ == "__main__": 

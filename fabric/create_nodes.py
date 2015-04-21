@@ -34,7 +34,8 @@ def clone_deploy():
     sudo('rabbitmq-plugins enable rabbitmq_federation')
     sudo('rabbitmq-plugins enable rabbitmq_federation_management')
 
-    # set up rabbitmq
+@task
+def start_rabbit():
     if RABBITMQ_USER not in sudo('rabbitmqctl list_users').stdout:
         sudo('rabbitmqctl add_user {0} {1}'.format(RABBITMQ_USER, RABBITMQ_PASS))
         sudo('rabbitmqctl add_vhost {0}'.format(RABBITMQ_VHOST))
@@ -44,8 +45,8 @@ def clone_deploy():
         sudo('rabbitmqctl set_policy federate-me \'^amq\.\' \'{"federation-upstream-set":"all"}\'')
         sudo('rabbitmq-server')
 
-
-# deploy streams
+@task
+def deploy_streams():
     if not fabfiles.exists('Streams'):
       run('git clone git@github.com:zatricion/Streams.git')
       with cd('Streams'):
@@ -66,7 +67,13 @@ def main():
   populate_hosts()
 
   # Clone the repo and switch to deployment branch
-  execute(clone_deploy)
+  # execute(clone_deploy)
+  
+  # Start rabbitmq
+  execute(start_rabbit)
+  
+  # Get the repo
+  execute(deploy_streams)
 
   # get local ipv4 address for bootstrapping (deploying from macbook)
   my_ipv4 = local('ipconfig getifaddr en0', capture=True)
