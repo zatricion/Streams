@@ -9,6 +9,7 @@ HOSTS = 'hosts_ipv4.txt'
 env.forward_agent = True
 env.key_filename = '~/.ssh/streams_deploy'
 env.abort_on_prompts = True
+env.hostnames = {}
 
 def populate_hosts():
     for line in open(HOSTS, 'r'):
@@ -16,6 +17,7 @@ def populate_hosts():
             name, host, password = line.split()
             env.hosts.append(host)
             env.passwords[host] = password
+            env.hostnames[host.split('@')[1]] = name
          
 @task
 def clone_deploy():
@@ -58,22 +60,16 @@ def deploy_streams():
             sudo('pip install -r requirements.txt')
         
         with cd('Streams/deploy'):
-            run('python runAnomaly.py readme.any no_external_config.txt 1
-
+            ## TODO: allow specification of a real config file based on hostnames
+            run('python runAnomaly.py readme.any no_external_config.txt ip')
 
 @task
 def start_kademlia(ip, port=None):
-  with cd('Streams/kademlia'):
-    run('twistd -n node -b {0} -p {1}'.format(ip, port))
-    
-@task
-def test():
-    
+    with cd('Streams/kademlia'):
+        run('twistd -n node -b {0} -p {1}'.format(ip, port))
 
 def main():
   populate_hosts()
-  execute(test)
-  raise Exception
   
   # Clone the repo and switch to deployment branch
   # execute(clone_deploy)

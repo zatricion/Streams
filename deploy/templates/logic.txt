@@ -97,7 +97,7 @@ def main():
     output_proc.join()
 
 def get_output(output_q):
-    % if external_processes %}
+    {% if external_processes %}
     cove = Cove()
     {% endif %}
     

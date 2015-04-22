@@ -1,0 +1,48 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html> <head>
+<title>Mani's Notes on A Distributed Python Framework</title>
+</head>
+
+<body>
+<h1></h1>
+<ol>
+  <li>
+  Regular streams; timed streams; NumPy, Pandas, SciKit
+  </li>
+  <li>
+  Dicts for inputs, outputs, state. State transition parameters
+  are inputs, outputs, state. No parameter for starts
+  </li>
+  <li>
+  Outputs = [f(v) for v in s.recent[s.start:s.start+length]
+  for all cases of a single stream.
+  For multiple streams:
+  Outputs = [f(v, w) for v in s0.recent[s.start:s.start+length] for w
+  in s1.recent[s1.recent+length]
+  </li>
+  <li>
+  state-transition functions for list_operation and
+  multilist_operation. f(recent_lists, state)  results in a dict of
+  outputs where all input parameters are also dicts. 
+  </li>
+  State-transition functions for moving windows.
+  <li>
+  Gating functions through the control system.
+  </li>
+  <li>
+  Keep the Python multiprocess and Google App/Compute Engine parts
+  unchanged. 
+  </li>
+  <li>
+  Check SciKit examples.
+  </li>
+  <li>
+  Tools for replay from files and databases.
+  </li>
+</ol>
+
+
+<hr>
+<address></address>
+<!-- hhmts start -->Last modified: Wed Aug 27 13:48:13 PDT 2014 <!-- hhmts end -->
+</body> </html>
