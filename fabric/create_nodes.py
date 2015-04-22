@@ -1,9 +1,9 @@
 from fabric.api import *
 import fabric.contrib.files as fabfiles
 
-RABBITMQ_USER = 'user1'
-RABBITMQ_PASS = 'pass1'
-RABBITMQ_VHOST = 'only'
+RABBITMQ_USER = 'peter'
+RABBITMQ_PASS = 'rabbit'
+RABBITMQ_VHOST = 'potter'
 
 HOSTS = 'hosts_ipv4.txt'
 env.forward_agent = True
@@ -11,28 +11,28 @@ env.key_filename = '~/.ssh/streams_deploy'
 env.abort_on_prompts = True
 
 def populate_hosts():
-  for line in open(HOSTS, 'r'):
-    if line.strip() and not line.startswith('#'):
-      host, password = line.split()
-      env.hosts.append(host)
-      env.passwords[host] = password
-
+    for line in open(HOSTS, 'r'):
+        if line.strip() and not line.startswith('#'):
+            name, host, password = line.split()
+            env.hosts.append(host)
+            env.passwords[host] = password
+         
 @task
 def clone_deploy():
-  with settings(prompts={'Are you sure you want to continue connecting (yes/no)? ' : 'yes'}):
-    # get git
-    sudo('apt-get install -y git')
-    
-    # get pip
-    sudo('apt-get install -y curl')
-    if not fabfiles.exists('get-pip.py'):
-      sudo('curl -O https://bootstrap.pypa.io/get-pip.py')
-      sudo('python get-pip.py')
-      
-    # get rabbitmq
-    sudo('apt-get install -y rabbitmq-server')
-    sudo('rabbitmq-plugins enable rabbitmq_federation')
-    sudo('rabbitmq-plugins enable rabbitmq_federation_management')
+    with settings(prompts={'Are you sure you want to continue connecting (yes/no)? ' : 'yes'}):
+        # get git
+        sudo('apt-get install -y git')
+
+        # get pip
+        sudo('apt-get install -y curl')
+        if not fabfiles.exists('get-pip.py'):
+            sudo('curl -O https://bootstrap.pypa.io/get-pip.py')
+            sudo('python get-pip.py')
+
+        # get rabbitmq
+        sudo('apt-get install -y rabbitmq-server')
+        sudo('rabbitmq-plugins enable rabbitmq_federation')
+        sudo('rabbitmq-plugins enable rabbitmq_federation_management')
 
 @task
 def start_rabbit():
@@ -48,24 +48,33 @@ def start_rabbit():
 @task
 def deploy_streams():
     if not fabfiles.exists('Streams'):
-      run('git clone git@github.com:zatricion/Streams.git')
-      with cd('Streams'):
-        run('git checkout deployment')
+        run('git clone git@github.com:zatricion/Streams.git')
+        with cd('Streams'):
+            run('git checkout deployment')
     else:
-      with cd('Streams'):
-        run('git fetch --all')
-        run('git reset --hard origin/deployment')
-        sudo('pip install -r requirements.txt')
+        with cd('Streams'):
+            run('git fetch --all')
+            run('git reset --hard origin/deployment')
+            sudo('pip install -r requirements.txt')
+        
+        with cd('Streams/deploy'):
+            run('python runAnomaly.py readme.any no_external_config.txt 1
 
 
 @task
 def start_kademlia(ip, port=None):
   with cd('Streams/kademlia'):
     run('twistd -n node -b {0} -p {1}'.format(ip, port))
+    
+@task
+def test():
+    
 
 def main():
   populate_hosts()
-
+  execute(test)
+  raise Exception
+  
   # Clone the repo and switch to deployment branch
   # execute(clone_deploy)
   

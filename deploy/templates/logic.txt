@@ -1,6 +1,7 @@
 import time
 import math
 import multiprocessing as mp
+import subprocess
 from core.FileToStream import FileToStream, JSONFileToStream, FileOrchestrator
 from core.Stream import Stream
 from core.Sender import Sender
@@ -15,6 +16,7 @@ class ExternalReceiver(mp.Process):
         mp.Process.__init__(self)
         self.instance = instance
         self.streams_to_procs = streams_to_procs
+        self.receivers = []
      
     def create_router(self, stream, proc):
         def router(ch, method, properties, body):
@@ -23,8 +25,12 @@ class ExternalReceiver(mp.Process):
     
     def run(self):
         for stream, proc in self.streams_to_procs.items():
-            ## might need a proc for each of these
-            cove.receive(stream, self.create_router(stream, proc))
+            # create a process using cove.receive to get messages
+            # from the rabbitmq queue for each incoming stream pushed to
+            # the appropriate process in-queue (proc.iq)
+            self.receivers.append(mp.Process(target=cove.receive, 
+                                       args=(stream, self.create_router(stream, proc))))
+            self.receivers[-1].start()
 {% endif %}
 
 def main():
