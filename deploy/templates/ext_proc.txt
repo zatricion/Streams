@@ -2,11 +2,11 @@ from core.Stream import Stream
 from core.Sender import Sender
 from core.AgentProcess import AgentProcess
 from core.Agent import *
+import kademlia.node.cove as cove
 
 def process_contents(ext_in_stream_list, ext_out_stream_list):
-    tq = get_tq()
-    AgentParametric(ext_in_stream_list, ext_out_stream_list, ext_in_stream_list,
-                   '{{ instance }}', tq)
+    CovertAgent(ext_in_stream_list, ext_out_stream_list, ext_in_stream_list,
+                   '{{ instance }}', cove)
 
 external_in_streams = {{ external_in_streams }}
 external_out_streams = {{ external_out_streams }}

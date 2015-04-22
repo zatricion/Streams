@@ -68,12 +68,12 @@ class AgentBasic(object):
         """
         self.signal()
 
-class AgentTaskQueue(AgentBasic):
-    def __init__(self, in_stream_list, out_stream_list, call_list, instance, tq):
-        super(AgentTaskQueue, self).__init__(
+class CovertAgent(AgentBasic):
+    def __init__(self, in_stream_list, out_stream_list, call_list, instance, cove):
+        super(CovertAgent, self).__init__(
             in_stream_list, out_stream_list, call_list)
-        self.instance = instance
-        self.tq = tq
+        self.instance = instance # unused for now
+        self.cove = cove
         
     def signal(self, stream=None):
         # This rule may be changed later.
@@ -84,13 +84,7 @@ class AgentTaskQueue(AgentBasic):
         for s in self.ins:
             val = s.recent[s.start[self]:s.end]
             if not val: continue 
-            msg = cPickle.dumps((s.name, val))
-            self.tq.insert(project="s~anomaly-gce",
-                          taskqueue="messaging",
-                          body={"kind": "taskqueues#task",
-                                "payloadBase64": base64.urlsafe_b64encode(msg),
-                                "tag": self.instance,
-                                "queueName": "messaging"}).execute()
+            self.cove.send(s.name, val)
             s.set_start(self, s.end)
 
 class AgentParametric(AgentBasic):

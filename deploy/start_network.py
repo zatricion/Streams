@@ -8,7 +8,7 @@ from core.Sender import Sender
 from core.AgentProcess import AgentProcess
 from core.Agent import *
 
-{% if external_processes %}
+
 import kademlia.node.cove as cove
 
 class ExternalReceiver(mp.Process):
@@ -31,20 +31,23 @@ class ExternalReceiver(mp.Process):
             self.receivers.append(mp.Process(target=cove.receive, 
                                        args=(stream, self.create_router(stream, proc))))
             self.receivers[-1].start()
-{% endif %}
+
 
 def main():
     modules = dict()    
-    in_streams_dict = {{ in_streams_dict }}
-    out_streams_dict = {{ out_streams_dict }}
-    external_in_streams = {{ external_in_streams }}
-    external_out_streams = {{ external_out_streams }}
-    external_processes = {{ external_processes }}
+    in_streams_dict = {'numbers.dat': ['p1'], 'main': ['p2']}
+    out_streams_dict = {'out0': 'p2', 'main': 'p1'}
+    external_in_streams = ['numbers.dat']
+    external_out_streams = ['out0']
+    external_processes = [u'p2']
     
-    {% for proc in processes %}
-    from {{ process_dir }}.{{ proc.name }} import {{ proc.name }}
-    modules['{{ proc.name }}'] = {{ proc.name }}
-    {% endfor %}
+    
+    from network.p2 import p2
+    modules['p2'] = p2
+    
+    from network.p1 import p1
+    modules['p1'] = p1
+    
     
     ### Connect modules
     for stream, from_module in out_streams_dict.iteritems():
@@ -73,7 +76,7 @@ def main():
     
     ### Receive from task queue
     if external_processes:
-        ExternalReceiver('{{ instance }}', in_streams_to_procs).start()
+        ExternalReceiver('ChenPi', in_streams_to_procs).start()
     
     file_to_stream_list = []
     ### Hardcoded I/O, name input files <<stream_name>>
@@ -105,9 +108,9 @@ def get_output(output_q):
         if msg_value == "CLOSE_STREAM":
             break
         print count, "stream_name, msg_value", stream_name, msg_value
-        {% if external_processes %}
+        
         cove.send(stream, msg_value)
-        {% endif %}
+        
 
 if __name__ == "__main__": 
     main()

@@ -7,7 +7,7 @@ sys.path.append(os.path.dirname(__file__))
 from kademlia.network import Server
 from kademlia import log
 
-from cove import Cove
+import cove
 
 def bootstrapDone(found, server):
     cove.start()
