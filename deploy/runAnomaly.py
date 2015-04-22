@@ -72,12 +72,12 @@ def main():
     with open(instance_config, 'r') as file:
         instance_to_proc_dict = json.loads(file.read())
         proc_to_instance_dict = {}
-        for k, v in instance_to_proc_dict:
+        for k, v in instance_to_proc_dict.items():
             for proc in v:
                 if proc_to_instance_dict.get(proc) != None:
                     raise Exception("External configuration file assigns same process to multiple machines")
                 if k != this_instance:
-                    proc_to_instance_dict[v] = k
+                    proc_to_instance_dict[proc] = k
 
     filename = sys.argv[1]
     # Import text file in anomaly format (.any) as string for parsing and parse it

@@ -9,7 +9,7 @@ from core.AgentProcess import AgentProcess
 from core.Agent import *
 
 {% if external_processes %}
-from cove import Cove
+from kademlia.node.cove import Cove
 
 class ExternalReceiver(mp.Process):
     def __init__(self, instance, streams_to_procs):

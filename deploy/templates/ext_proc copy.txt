@@ -3,9 +3,24 @@ from core.Sender import Sender
 from core.AgentProcess import AgentProcess
 from core.Agent import *
 
+
+from oauth2client import gce
+from apiclient.discovery import build
+import httplib2
+import base64
+
+def get_tq():
+    credentials = gce.AppAssertionCredentials('')
+    http = httplib2.Http()
+    http=credentials.authorize(http)
+    credentials.refresh(http)
+    service = build('taskqueue', 'v1beta2', http=http)
+    tq = service.tasks()
+    return tq
+
 def process_contents(ext_in_stream_list, ext_out_stream_list):
     tq = get_tq()
-    AgentParametric(ext_in_stream_list, ext_out_stream_list, ext_in_stream_list,
+    AgentTaskQueue(ext_in_stream_list, ext_out_stream_list, ext_in_stream_list,
                    '{{ instance }}', tq)
 
 external_in_streams = {{ external_in_streams }}

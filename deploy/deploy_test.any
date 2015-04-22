@@ -1,0 +1,32 @@
+agent Main {
+    process: p1
+    type: anomaly
+    function: map_multiple_streams
+    parameters {
+        element_function: lambda x: x
+    }
+     
+    input_streams {
+        numbers.dat
+    }
+    output_streams {
+        main
+    }
+}
+
+agent TimesSeven {
+    process: p2
+    type: anomaly
+    function: list_operator 
+    parameters {
+        list_op: map
+        element_function: lambda x: x * 7
+    }
+    
+    input_streams {
+        main
+    }
+    output_streams {
+        out0
+    }
+}
