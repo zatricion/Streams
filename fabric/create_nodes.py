@@ -44,7 +44,7 @@ def start_rabbit():
         sudo('sudo rabbitmqctl set_permissions -p {0} {1} ".*" ".*" ".*"'.format(RABBITMQ_VHOST, 
                                                                                  RABBITMQ_USER))
                                                                                  
-        sudo('rabbitmqctl set_policy federate-me \'^amq\.\' \'{"federation-upstream-set":"all"}\'')
+        # sudo('rabbitmqctl set_policy federate-me \'^amq\.\' \'{"federation-upstream-set":"all"}\'')
         sudo('rabbitmq-server')
 
 @task
@@ -60,14 +60,14 @@ def deploy_streams():
             sudo('pip install -r requirements.txt')
         
         with cd('Streams/deploy'):
-            ## TODO: allow specification of a real config file based on hostnames
-            run('python runAnomaly.py readme.any no_external_config.txt ip')
+            ## TODO: allow specification of a real config file
+            run('python runAnomaly.py deploy_test.any deploy_test.config {0}'.format(env.hostnames[env.host]))
 
 @task
 def start_kademlia(ip, port=None):
     with cd('Streams/kademlia'):
         run('twistd -n node -b {0} -p {1}'.format(ip, port))
-
+ 
 def main():
   populate_hosts()
   

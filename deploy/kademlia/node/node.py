@@ -7,10 +7,11 @@ sys.path.append(os.path.dirname(__file__))
 from kademlia.network import Server
 from kademlia import log
 
+import start_network
 import cove
 
 def bootstrapDone(found, server):
-    cove.start()
+    start_network.main()
 
 def makeService(config):
     kserver = Server()
