@@ -1,4 +1,5 @@
 # later on there will be a way to use public keys instead of passwords
 # hostname username@ipv6_address password
 
+localhost mdlauria@10.0.1.12 password
 ChenPi pi@10.0.1.7 raspberry

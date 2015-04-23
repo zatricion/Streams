@@ -16,7 +16,7 @@ def populate_hosts():
         if line.strip() and not line.startswith('#'):
             name, host, password = line.split()
             env.hosts.append(host)
-            env.passwords[host] = password
+            env.passwords[host+':22'] = password
             env.hostnames[host.split('@')[1]] = name
          
 @task
@@ -38,6 +38,7 @@ def clone_deploy():
 
 @task
 def start_rabbit():
+    sudo('rabbitmq-server', pty=False)
     if RABBITMQ_USER not in sudo('rabbitmqctl list_users').stdout:
         sudo('rabbitmqctl add_user {0} {1}'.format(RABBITMQ_USER, RABBITMQ_PASS))
         sudo('rabbitmqctl add_vhost {0}'.format(RABBITMQ_VHOST))
@@ -45,7 +46,6 @@ def start_rabbit():
                                                                                  RABBITMQ_USER))
                                                                                  
         # sudo('rabbitmqctl set_policy federate-me \'^amq\.\' \'{"federation-upstream-set":"all"}\'')
-        sudo('rabbitmq-server')
 
 @task
 def deploy_streams():
