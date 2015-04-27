@@ -1,3 +1,4 @@
+import time
 from fabric.api import *
 import fabric.contrib.files as fabfiles
 
@@ -38,14 +39,21 @@ def clone_deploy():
 
 @task
 def start_rabbit():
-    sudo('rabbitmq-server', pty=False)
-    if RABBITMQ_USER not in sudo('rabbitmqctl list_users').stdout:
-        sudo('rabbitmqctl add_user {0} {1}'.format(RABBITMQ_USER, RABBITMQ_PASS))
-        sudo('rabbitmqctl add_vhost {0}'.format(RABBITMQ_VHOST))
-        sudo('sudo rabbitmqctl set_permissions -p {0} {1} ".*" ".*" ".*"'.format(RABBITMQ_VHOST, 
-                                                                                 RABBITMQ_USER))
+    sudo('rabbitmq-server -detached')
+    time.sleep(20)
+    sudo('rabbitmqctl add_user {0} {1}'.format(RABBITMQ_USER, RABBITMQ_PASS))
+    sudo('rabbitmqctl add_vhost {0}'.format(RABBITMQ_VHOST))
+    sudo('sudo rabbitmqctl set_permissions -p {0} {1} ".*" ".*" ".*"'.format(RABBITMQ_VHOST, 
+                                                                             RABBITMQ_USER))
                                                                                  
         # sudo('rabbitmqctl set_policy federate-me \'^amq\.\' \'{"federation-upstream-set":"all"}\'')
+
+@task
+def kill_rabbit():
+    sudo('rabbitmqctl delete_user {0}'.format(RABBITMQ_USER))
+    sudo('rabbitmqctl delete_vhost {0}'.format(RABBITMQ_VHOST))
+    sudo('rabbitmqctl stop')
+
 
 @task
 def deploy_streams():
@@ -75,7 +83,7 @@ def main():
   # execute(clone_deploy)
   
   # Start rabbitmq
-  execute(start_rabbit)
+  #execute(start_rabbit)
   
   # Get the repo
   execute(deploy_streams)
@@ -85,6 +93,9 @@ def main():
   
   # start Kademlia network
   execute(start_kademlia, my_ipv4, 7000) 
+  
+  # testing, remove all things
+  execute(kill_rabbit)
 
 if __name__ == '__main__':
   main()
