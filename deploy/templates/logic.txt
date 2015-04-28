@@ -1,7 +1,6 @@
 import time
 import math
 import multiprocessing as mp
-import subprocess
 from core.FileToStream import FileToStream, JSONFileToStream, FileOrchestrator
 from core.Stream import Stream
 from core.Sender import Sender
@@ -9,7 +8,7 @@ from core.AgentProcess import AgentProcess
 from core.Agent import *
 
 {% if external_processes %}
-import kademlia.node.cove as cove
+import cove
 
 class ExternalReceiver(mp.Process):
     def __init__(self, instance, streams_to_procs):

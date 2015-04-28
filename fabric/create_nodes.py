@@ -36,11 +36,12 @@ def clone_deploy():
         sudo('apt-get install -y rabbitmq-server')
         sudo('rabbitmq-plugins enable rabbitmq_federation')
         sudo('rabbitmq-plugins enable rabbitmq_federation_management')
+        sudo('rabbitmq-server -detached')
+        time.sleep(20)
 
 @task
 def start_rabbit():
-    sudo('rabbitmq-server -detached')
-    time.sleep(20)
+    sudo('rabbitmqctl start_app')
     sudo('rabbitmqctl add_user {0} {1}'.format(RABBITMQ_USER, RABBITMQ_PASS))
     sudo('rabbitmqctl add_vhost {0}'.format(RABBITMQ_VHOST))
     sudo('sudo rabbitmqctl set_permissions -p {0} {1} ".*" ".*" ".*"'.format(RABBITMQ_VHOST, 
@@ -73,8 +74,13 @@ def deploy_streams():
 
 @task
 def start_kademlia(ip, port=None):
-    with cd('Streams/kademlia'):
-        run('twistd -n node -b {0} -p {1}'.format(ip, port))
+    with cd('Streams/deploy/kademlia'):
+        run('twistd node -b {0} -p {1}'.format(ip, port))
+        
+@task
+def create_local_node(port=None):
+    with lcd('../deploy/kademlia'):
+        local('twistd node -p {0}'.format(port))
  
 def main():
   populate_hosts()
@@ -83,11 +89,14 @@ def main():
   # execute(clone_deploy)
   
   # Start rabbitmq
-  #execute(start_rabbit)
+  # execute(start_rabbit)
   
   # Get the repo
   execute(deploy_streams)
 
+  # start temporary kademlia node
+  execute(create_local_node, 7000)
+  
   # get local ipv4 address for bootstrapping (deploying from macbook)
   my_ipv4 = local('ipconfig getifaddr en0', capture=True)
   
@@ -95,7 +104,7 @@ def main():
   execute(start_kademlia, my_ipv4, 7000) 
   
   # testing, remove all things
-  execute(kill_rabbit)
+  # execute(kill_rabbit)
 
 if __name__ == '__main__':
   main()

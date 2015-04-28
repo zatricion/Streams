@@ -3,15 +3,13 @@ from twisted.python.log import ILogObserver
 from twisted.internet import reactor, task
 
 import sys, os
-sys.path.append(os.path.dirname(__file__))
 from kademlia.network import Server
 from kademlia import log
 
-import start_network
-import cove
+import subprocess as sp
 
 def bootstrapDone(found, server):
-    start_network.main()
+    sp.call(["python", "../start_network.py"])
 
 def makeService(config):
     kserver = Server()
@@ -19,3 +17,5 @@ def makeService(config):
   
     return internet.UDPServer(7000, kserver.protocol)
 
+if __name__ == "__main__":
+    sp.call(["python", "start_network.py"])

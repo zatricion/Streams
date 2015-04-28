@@ -4,7 +4,7 @@ from twisted.python import usage
 from twisted.plugin import IPlugin
 from twisted.application.service import IServiceMaker
 
-from node import node
+from ...node import node
 
 class Options(usage.Options):
   optParameters = [["bootstrap", "b", None, "The ip address to use for bootstrapping."]
