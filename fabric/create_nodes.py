@@ -75,12 +75,12 @@ def deploy_streams():
 @task
 def start_kademlia(ip, port=None):
     with cd('Streams/deploy/'):
-        run('twistd node -b {0} -p {1}'.format(ip, port))
+        run('twistd -n node -b {0} -p {1}'.format(ip, port))
         
 @task
 def create_local_node(port=None):
     with lcd('../deploy/'):
-        local('twistd node -p {0}'.format(port))
+        local('twistd -l deploy_test.log node -b 10.0.1.7 -p {0}'.format(port))
  
 def main():
   populate_hosts()
@@ -92,7 +92,7 @@ def main():
   # execute(start_rabbit)
   
   # Get the repo
-  # execute(deploy_streams)
+  execute(deploy_streams)
 
   # start temporary kademlia node
   execute(create_local_node, 7000)

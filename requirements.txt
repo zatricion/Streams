@@ -6,3 +6,4 @@ librabbitmq==1.6.1
 kademlia==0.4
 msgpack-python==0.4.6
 simplejson==3.6.5
+openpyxl>=1.6.1,<2.0.0
