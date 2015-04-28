@@ -2,7 +2,7 @@ from core.Stream import Stream
 from core.Sender import Sender
 from core.AgentProcess import AgentProcess
 from core.Agent import *
-import kademlia.node.cove as cove
+import cove
 
 def process_contents(ext_in_stream_list, ext_out_stream_list):
     CovertAgent(ext_in_stream_list, ext_out_stream_list, ext_in_stream_list,
