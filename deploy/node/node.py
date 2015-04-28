@@ -9,7 +9,7 @@ from kademlia import log
 import subprocess as sp
 
 def bootstrapDone(found, server):
-    sp.call(["python", "../start_network.py"])
+    sp.call(["python", "start_network.py"])
 
 def makeService(config):
     kserver = Server()
