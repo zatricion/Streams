@@ -3,6 +3,7 @@ from twisted.python.log import ILogObserver
 from twisted.internet import reactor, task
 
 import sys, os
+sys.path.append(os.path.dirname(__file__))
 from kademlia.network import Server
 from kademlia import log
 
