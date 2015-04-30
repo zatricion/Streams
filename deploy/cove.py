@@ -1,7 +1,11 @@
 import pika
 import msgpack
 
-conn = pika.BlockingConnection(pika.ConnectionParameters('localhost'))
+credentials = pika.PlainCredentials('peter', 'rabbit')
+conn = pika.BlockingConnection(pika.ConnectionParameters(host='localhost',
+                                                         port=5672,
+                                                         virtual_host='potter',
+                                                         credentials=credentials))
 channel = conn.channel()
 
 def send(q_name, message):
