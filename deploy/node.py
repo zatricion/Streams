@@ -14,8 +14,8 @@ def bootstrapDone(found, server):
 
 def makeService(config):
     kserver = Server()
-    kserver.bootstrap([(config["bootstrap"], int(config["port"]))]).addCallback(bootstrapDone, kserver)
-  
+    kserver.bootstrap([(config["bootstrap"], int(config["port"]))]).addCallback(bootstrapDone, kserver).addErrback(bootstrapDone, kserver)
+
     return internet.UDPServer(7000, kserver.protocol)
 
 if __name__ == "__main__":
