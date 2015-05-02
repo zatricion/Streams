@@ -13,6 +13,10 @@ def send(q_name, message):
     channel.basic_publish(exchange='',
                               routing_key=q_name,
                               body=msgpack.packb(message))
+    # debug
+    channel.basic_publish(exchange='',
+                              routing_key=q_name,
+                              body=str(message))
 
 def receive(q_name, callback):
     channel.queue_declare(queue=q_name)    
