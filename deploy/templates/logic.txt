@@ -69,6 +69,7 @@ def main():
     in_streams_to_procs = {stream: map(lambda x: modules[x], 
                                        filter(lambda x: x in local_procs, proc_name_list))
                                 for stream, proc_name_list in in_streams_dict.items()}
+    in_streams_to_procs = {k: v for k, v in in_streams_to_procs.items() if len(v) > 0}
     
     ### Receive from task queue
     if external_processes:
