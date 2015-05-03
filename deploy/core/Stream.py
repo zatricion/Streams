@@ -1,6 +1,4 @@
 from SystemParameters import DEFAULT_STREAM_SIZE, DEFAULT_BUFFER_SIZE_FOR_STREAM
-import numpy as np
-import pandas as pd
 
 """ This module contains the Stream class which is
 is also described in external documentation.
@@ -213,18 +211,4 @@ class Stream(object):
         self._begin = 0
 
     def create_recent(self, size): return [0] * size
-
-class StreamArray(Stream):
-    def __init__(self, name=None):
-        super(StreamArray, self).__init__(name)
-
-    def create_recent(self, size): return np.zeros(size)
-
-class StreamSeries(Stream):
-    def __init__(self, name=None):
-        super(StreamSeries, self).__init__(name)
-
-    def create_recent(self, size): return pd.Series([np.nan] *size)
-
-    
         
