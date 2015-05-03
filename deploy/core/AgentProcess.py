@@ -1,5 +1,5 @@
 import multiprocessing
-from Stream import Stream, StreamArray, StreamSeries
+from Stream import Stream
 from Sender import Sender
 from Agent import *
 
