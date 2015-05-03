@@ -1,5 +1,5 @@
 agent Main {
-    process: p1
+    process: p2
     type: anomaly
     function: map_multiple_streams
     parameters {
@@ -15,7 +15,7 @@ agent Main {
 }
 
 agent TimesSeven {
-    process: p2
+    process: p1
     type: anomaly
     function: list_operator 
     parameters {
