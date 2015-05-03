@@ -42,44 +42,47 @@ def clone_deploy():
             sudo('curl -O https://bootstrap.pypa.io/get-pip.py')
             sudo('python get-pip.py')
 
-        # get rabbitmq
-       
-        sudo('apt-get install -y rabbitmq-server')
-        sudo('rabbitmq-server -detached')
-        time.sleep(20)
-        sudo('rabbitmq-plugins enable rabbitmq_management')
-        sudo('rabbitmq-plugins enable rabbitmq_federation')
-        sudo('rabbitmq-plugins enable rabbitmq_federation_management')
+@task
+def get_rabbitmq():       
+    sudo('apt-get install -y rabbitmq-server')
+    sudo('rabbitmq-server -detached')
+    time.sleep(20)
+    sudo('rabbitmq-plugins enable rabbitmq_management')
+    sudo('rabbitmq-plugins enable rabbitmq_federation')
+    sudo('rabbitmq-plugins enable rabbitmq_federation_management')
 
 
 @task
 def start_rabbit():
-    sudo('rabbitmqctl start_app')
     sudo('rabbitmqctl add_user {0} {1}'.format(RABBITMQ_USER, RABBITMQ_PASS))
     sudo('rabbitmqctl set_user_tags {0} administrator'.format(RABBITMQ_USER))
     sudo('rabbitmqctl add_vhost {0}'.format(RABBITMQ_VHOST))
+    sudo('sudo rabbitmqctl set_permissions -p {0} {1} ".*" ".*" ".*"'.format('/', 
+                                                                           RABBITMQ_USER))
     sudo('sudo rabbitmqctl set_permissions -p {0} {1} ".*" ".*" ".*"'.format(RABBITMQ_VHOST, 
                                                                            RABBITMQ_USER))
                                                                                
-    sudo('rabbitmqctl set_policy federate-me \'^amq\.\' \'{"federation-upstream-set":"all"}\'')
+    # sudo('rabbitmqctl set_policy federate-me \'^amq\.\' \'{"federation-upstream-set":"all"}\'')
     
-    hosts = []
-    for name in env.hosts:
-        pass # TODO: use this to set upstreams
-    sudo("rabbitmqctl set_parameter federation-upstream {0} '{1}'".format("localhost", "{\"uri\" : \"amqp://10.0.1.12\"}"))
+ #    hosts = []
+#     for name in env.hosts:
+#         pass # TODO: use this to set upstreams
+    sudo("rabbitmqctl set_policy federate-me '^amq\.' {0} '{1}'".format("localhost", #"{\"uri\" : \"amqp://10.0.1.12\"}"))
     
-#                                                                           {"uri": "amqp://{0}:{1}@{2}:{3}/{4}".format(RABBITMQ_USER,
-#                                                                                                                       RABBITMQ_PASS,
-#                                                                                                                       "10.0.1.12",
-#                                                                                                                       RABBITMQ_PORT,
-#                                                                                                                       RABBITMQ_VHOST
-#                                                                                                                       )}))
+                                                                          {"uri": "amqp://{0}:{1}@{2}:{3}/{4}".format(RABBITMQ_USER,
+                                                                                                                      RABBITMQ_PASS,
+                                                                                                                      "67.160.0.6",
+                                                                                                                      RABBITMQ_PORT,
+                                                                                                                      RABBITMQ_VHOST
+                                                                                                                      )}))
 
 @task
 def kill_rabbit():
-    sudo('rabbitmqctl delete_user {0}'.format(RABBITMQ_USER))
-    sudo('rabbitmqctl delete_vhost {0}'.format(RABBITMQ_VHOST))
-    sudo('rabbitmqctl stop')
+    # sudo('rabbitmqctl delete_user {0}'.format(RABBITMQ_USER))
+#     sudo('rabbitmqctl delete_vhost {0}'.format(RABBITMQ_VHOST))
+    # sudo('rabbitmqctl stop')
+    with lcd('../deploy/'):
+        local('kill -9 `cat twistd.pid`')
 
 
 @task
@@ -106,36 +109,35 @@ def start_kademlia(ip, port=None):
 @task
 def create_local_node(port=None):
     with lcd('../deploy/'):
-        local('twistd -l deploy_test.log node -b 10.0.1.7 -p {0}'.format(port))
+        local('twistd -l deploy_test.log node')
  
 def main():
   populate_hosts()
   
-  try:
-      # update system's default application toolset
-      # execute(update)
-  
-      # Clone the repo and switch to deployment branch
-      execute(clone_deploy)
-  
-      # Start rabbitmq
-      execute(start_rabbit)
-  
-      # Get the repo
-      execute(deploy_streams)
+  # update system's default application toolset
+  # execute(update)
 
-      # start temporary kademlia node
-      execute(create_local_node, RABBITMQ_PORT)
+  # Clone the repo and switch to deployment branch
+  execute(clone_deploy)
+
+  # Start rabbitmq
+  # execute(start_rabbit)
+
+  # Get the repo
+  execute(deploy_streams)
   
-      # get local ipv4 address for bootstrapping (deploying from macbook)
-      my_ipv4 = local('ipconfig getifaddr en0', capture=True)
+
+  # start temporary kademlia node
+  execute(create_local_node, RABBITMQ_PORT)
+
+  # get local ipv4 address for bootstrapping (deploying from macbook)
+  my_ipv4 = local('ipconfig getifaddr en0', capture=True)
+
+  # start Kademlia network
+  execute(start_kademlia, my_ipv4, RABBITMQ_PORT) 
   
-      # start Kademlia network
-      execute(start_kademlia, my_ipv4, RABBITMQ_PORT) 
-      
-  finally:
-      # testing, remove all things
-      execute(kill_rabbit)
+  # testing, remove all things
+  # execute(kill_rabbit)
 
 if __name__ == '__main__':
   main()
