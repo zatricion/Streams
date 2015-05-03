@@ -1,7 +1,6 @@
 Fabric==1.10.1
 Twisted==15.0.0
 pika==0.9.14
-celery==3.1.17
 librabbitmq==1.6.1
 kademlia==0.4
 msgpack-python==0.4.6
