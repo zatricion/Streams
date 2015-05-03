@@ -1,4 +1,4 @@
-from Stream import Stream, StreamArray, StreamSeries
+from Stream import Stream
 from SystemParameters import EPSILON
 from collections import namedtuple
 import copy
