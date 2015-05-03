@@ -10,11 +10,11 @@ channel = conn.channel()
 
 def send(q_name, message):
     channel.queue_declare(queue=q_name)
-    channel.queue_bind(exchange='amqp.direct',
+    channel.queue_bind(exchange='amq.direct',
                        queue=q_name,
                        routing_key=q_name)
                        
-    channel.basic_publish(exchange='amqp.direct',
+    channel.basic_publish(exchange='amq.direct',
                           routing_key=q_name,
                           body=msgpack.packb(message))
     # debug
@@ -24,7 +24,7 @@ def send(q_name, message):
 
 def receive(q_name, callback):
     channel.queue_declare(queue=q_name)
-    channel.queue_bind(exchange='amqp.direct',
+    channel.queue_bind(exchange='amq.direct',
                        queue=q_name,
                        routing_key=q_name)
 
