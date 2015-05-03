@@ -18,8 +18,9 @@ class ExternalReceiver(mp.Process):
         self.receivers = []
      
     def create_router(self, stream, proc):
-        def router(ch, method, properties, body):
-            proc.iq.put((stream, cove.unpack(value)))
+        def router(channel, method, properties, body):
+            proc.iq.put((stream, cove.unpack(body)))
+            channel.basic_ack(delivery_tag=method.delivery_tag)
         return router
     
     def run(self):
@@ -105,9 +106,6 @@ def get_output(output_q):
         if msg_value == "CLOSE_STREAM":
             break
         print count, "stream_name, msg_value", stream_name, msg_value
-        {% if external_processes %}
-        cove.send(stream, msg_value)
-        {% endif %}
 
 if __name__ == "__main__": 
     main()
