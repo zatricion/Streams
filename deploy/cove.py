@@ -41,9 +41,9 @@ class Cove(object):
 
         for method_frame, properties, body in self.channel.consume(q_name):
             # Display the message parts
-            print method_frame
-            print properties
-            print body
+#             print method_frame
+#             print properties
+#             print body
 
             # Acknowledge the message
             self.channel.basic_ack(method_frame.delivery_tag)

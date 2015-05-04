@@ -30,3 +30,20 @@ agent TimesSeven {
         out0
     }
 }
+
+agent PlusPointThree {
+    process: p2
+    type: anomaly
+    function: list_operator
+    parameters {
+        list_op: map
+        element_function: lambda x: x + 0.3
+    }
+
+    input_streams {
+        sevenx
+    }
+    output_streams {
+        out0
+    }
+}

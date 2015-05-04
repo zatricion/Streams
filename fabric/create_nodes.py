@@ -41,6 +41,9 @@ def clone_deploy():
         if not fabfiles.exists('get-pip.py'):
             sudo('curl -O https://bootstrap.pypa.io/get-pip.py')
             sudo('python get-pip.py')
+        
+        # get python development tools
+        sudo('apt-get install -y python-dev')
 
 @task
 def get_rabbitmq():       
@@ -84,60 +87,18 @@ def kill_rabbit():
     with lcd('../deploy/'):
         local('kill -9 `cat twistd.pid`')
 
-
-@task
-def deploy_streams():
-    if not fabfiles.exists('Streams'):
-        run('git clone git@github.com:zatricion/Streams.git')
-        with cd('Streams'):
-            run('git checkout deployment')
-    else:
-        with cd('Streams'):
-            run('git fetch --all')
-            run('git reset --hard origin/deployment')
-            sudo('pip install -r requirements.txt')
-        
-        with cd('Streams/deploy'):
-            ## TODO: allow specification of a real config file
-            run('python runAnomaly.py deploy_test.any deploy_test.config {0}'.format(env.hostnames[env.host]))
-
-@task
-def start_kademlia(ip, port=None):
-    with cd('Streams/deploy/'):
-        run('twistd -n node -b {0} -p {1}'.format(ip, port))
-        
-@task
-def create_local_node(port=None):
-    with lcd('../deploy/'):
-        local('twistd -l deploy_test.log node')
  
 def main():
   populate_hosts()
   
   # update system's default application toolset
-  # execute(update)
+  execute(update)
 
   # Clone the repo and switch to deployment branch
   execute(clone_deploy)
 
   # Start rabbitmq
-  # execute(start_rabbit)
-
-  # Get the repo
-  execute(deploy_streams)
-  
-
-  # start temporary kademlia node
-  execute(create_local_node, RABBITMQ_PORT)
-
-  # get local ipv4 address for bootstrapping (deploying from macbook)
-  my_ipv4 = local('ipconfig getifaddr en0', capture=True)
-
-  # start Kademlia network
-  execute(start_kademlia, my_ipv4, RABBITMQ_PORT) 
-  
-  # testing, remove all things
-  # execute(kill_rabbit)
+  execute(start_rabbit)
 
 if __name__ == '__main__':
   main()
