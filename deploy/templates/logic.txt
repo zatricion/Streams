@@ -17,18 +17,19 @@ class ExternalReceiver(mp.Process):
         self.streams_to_procs = streams_to_procs
         self.receivers = []
      
-    def create_router(self, stream, proc):
+    def create_router(self, stream, proc_list):
         def router(msg):
-            proc.iq.put((stream, msg))
+            for proc in proc_list:
+                proc.iq.put((stream, msg))
         return router
     
     def run(self):
-        for stream, proc in self.streams_to_procs.items():
+        for stream, proc_list in self.streams_to_procs.items():
             # create a process using cove.receive to get messages
             # from the rabbitmq queue for each incoming stream pushed to
             # the appropriate process in-queue (proc.iq)
             self.receivers.append(mp.Process(target=cove.receive, 
-                                       args=(stream, self.create_router(stream, proc))))
+                                       args=(stream, self.create_router(stream, proc_list))))
             self.receivers[-1].start()
 {% endif %}
 
