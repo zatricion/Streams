@@ -12,7 +12,7 @@ class Cove(object):
         self.conn = pika.BlockingConnection(parameters)
         self.channel = self.conn.channel()
 
-    def send(q_name, message):
+    def send(self, q_name, message):
         channel.queue_declare(queue=q_name)
 
         # TODO: find a better way than unbind,bind
@@ -28,7 +28,7 @@ class Cove(object):
                               routing_key=q_name,
                               body=msgpack.packb(message))
 
-    def receive(q_name, callback):
+    def receive(self, q_name, callback):
         channel.queue_declare(queue=q_name)
 
         # TODO: find a better way than unbind,bind
