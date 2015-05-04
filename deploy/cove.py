@@ -10,7 +10,7 @@ parameters = pika.ConnectionParameters(host='localhost',
 class Cove(object):
     def __init__(self):
         self.conn = pika.BlockingConnection(parameters)
-        self.channel = conn.channel()
+        self.channel = self.conn.channel()
 
     def send(q_name, message):
         channel.queue_declare(queue=q_name)
