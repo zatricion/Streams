@@ -18,9 +18,8 @@ class ExternalReceiver(mp.Process):
         self.receivers = []
      
     def create_router(self, stream, proc):
-        def router(channel, method, properties, body):
-            proc.iq.put((stream, cove.unpack(body)))
-            channel.basic_ack(delivery_tag=method.delivery_tag)
+        def router(msg):
+            proc.iq.put((stream, msg))
         return router
     
     def run(self):

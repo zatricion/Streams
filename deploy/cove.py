@@ -23,10 +23,6 @@ def send(q_name, message):
     channel.basic_publish(exchange='amq.direct',
                           routing_key=q_name,
                           body=msgpack.packb(message))
-    # debug
-    channel.basic_publish(exchange='',
-                              routing_key=q_name,
-                              body=str(message))
 
 def receive(q_name, callback):
     channel.queue_declare(queue=q_name)
@@ -39,8 +35,13 @@ def receive(q_name, callback):
                        queue=q_name,
                        routing_key=q_name)
 
-    channel.basic_consume(callback, queue=q_name, no_ack=False)
-    channel.start_consuming()
+    while True:
+        result = channel.basic_get(queue=q_name, no_ack=False)
+        if not result:
+            break
+        
+        callback(self.unpack(result['body']))
+        channel.basic_ack(result['method']['delivery_tag'])
 
 def unpack(message):
     return msgpack.unpackb(message, use_list=False)
