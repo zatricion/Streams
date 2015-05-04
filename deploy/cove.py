@@ -13,29 +13,29 @@ class Cove(object):
         self.channel = self.conn.channel()
 
     def send(self, q_name, message):
-        channel.queue_declare(queue=q_name)
+        self.channel.queue_declare(queue=q_name)
 
         # TODO: find a better way than unbind,bind
-        channel.queue_unbind(exchange='amq.direct',
+        self.channel.queue_unbind(exchange='amq.direct',
                              queue=q_name,
                              routing_key=q_name)
 
-        channel.queue_bind(exchange='amq.direct',
+        self.channel.queue_bind(exchange='amq.direct',
                            queue=q_name,
                            routing_key=q_name)
 
-        channel.basic_publish(exchange='amq.direct',
+        self.channel.basic_publish(exchange='amq.direct',
                               routing_key=q_name,
                               body=msgpack.packb(message))
 
     def receive(self, q_name, callback):
-        channel.queue_declare(queue=q_name)
+        self.channel.queue_declare(queue=q_name)
 
         # TODO: find a better way than unbind,bind
-        channel.queue_unbind(exchange='amq.direct',
+        self.channel.queue_unbind(exchange='amq.direct',
                              queue=q_name,
                              routing_key=q_name)
-        channel.queue_bind(exchange='amq.direct',
+        self.channel.queue_bind(exchange='amq.direct',
                            queue=q_name,
                            routing_key=q_name)
 
@@ -46,6 +46,6 @@ class Cove(object):
             print body
 
             # Acknowledge the message
-            channel.basic_ack(method_frame.delivery_tag)
+            self.channel.basic_ack(method_frame.delivery_tag)
 
             callback(msgpack.unpackb(message, use_list=False))
