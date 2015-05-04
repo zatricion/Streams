@@ -2,49 +2,50 @@ import pika
 import msgpack
 
 credentials = pika.PlainCredentials('peter', 'rabbit')
-conn = pika.BlockingConnection(pika.ConnectionParameters(host='localhost',
-                                                         port=5672,
-                                                         virtual_host='potter',
-                                                         credentials=credentials))
-channel = conn.channel()
+parameters = pika.ConnectionParameters(host='localhost',
+                                       port=5672,
+                                       virtual_host='potter',
+                                       credentials=credentials)
 
-def unpack(message):
-    return msgpack.unpackb(message, use_list=False)
+class Cove(object):
+    def __init__(self):
+        self.conn = pika.BlockingConnection(parameters)
+        self.channel = conn.channel()
 
-def send(q_name, message):
-    channel.queue_declare(queue=q_name)
+    def send(q_name, message):
+        channel.queue_declare(queue=q_name)
 
-    # TODO: find a better way than unbind,bind
-    channel.queue_unbind(exchange='amq.direct',
-                         queue=q_name,
-                         routing_key=q_name)
+        # TODO: find a better way than unbind,bind
+        channel.queue_unbind(exchange='amq.direct',
+                             queue=q_name,
+                             routing_key=q_name)
 
-    channel.queue_bind(exchange='amq.direct',
-                       queue=q_name,
-                       routing_key=q_name)
+        channel.queue_bind(exchange='amq.direct',
+                           queue=q_name,
+                           routing_key=q_name)
 
-    channel.basic_publish(exchange='amq.direct',
-                          routing_key=q_name,
-                          body=msgpack.packb(message))
+        channel.basic_publish(exchange='amq.direct',
+                              routing_key=q_name,
+                              body=msgpack.packb(message))
 
-def receive(q_name, callback):
-    channel.queue_declare(queue=q_name)
+    def receive(q_name, callback):
+        channel.queue_declare(queue=q_name)
 
-    # TODO: find a better way than unbind,bind
-    channel.queue_unbind(exchange='amq.direct',
-                         queue=q_name,
-                         routing_key=q_name)
-    channel.queue_bind(exchange='amq.direct',
-                       queue=q_name,
-                       routing_key=q_name)
+        # TODO: find a better way than unbind,bind
+        channel.queue_unbind(exchange='amq.direct',
+                             queue=q_name,
+                             routing_key=q_name)
+        channel.queue_bind(exchange='amq.direct',
+                           queue=q_name,
+                           routing_key=q_name)
 
-    for method_frame, properties, body in channel.consume(q_name):
-        # Display the message parts
-        print method_frame
-        print properties
-        print body
+        for method_frame, properties, body in channel.consume(q_name):
+            # Display the message parts
+            print method_frame
+            print properties
+            print body
 
-        # Acknowledge the message
-        channel.basic_ack(method_frame.delivery_tag)
+            # Acknowledge the message
+            channel.basic_ack(method_frame.delivery_tag)
 
-        callback(unpack(body))
+            callback(msgpack.unpackb(message, use_list=False))

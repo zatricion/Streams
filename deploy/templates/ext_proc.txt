@@ -2,11 +2,11 @@ from core.Stream import Stream
 from core.Sender import Sender
 from core.AgentProcess import AgentProcess
 from core.Agent import *
-import cove
+from cove import Cove
 
 def process_contents(ext_in_stream_list, ext_out_stream_list):
     CovertAgent(ext_in_stream_list, ext_out_stream_list, ext_in_stream_list,
-                   '{{ instance }}', cove)
+                   '{{ instance }}', Cove())
 
 external_in_streams = {{ external_in_streams }}
 external_out_streams = {{ external_out_streams }}

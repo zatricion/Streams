@@ -8,7 +8,7 @@ from core.AgentProcess import AgentProcess
 from core.Agent import *
 
 {% if external_processes %}
-import cove
+from cove import Cove
 
 class ExternalReceiver(mp.Process):
     def __init__(self, instance, streams_to_procs):
@@ -16,6 +16,7 @@ class ExternalReceiver(mp.Process):
         self.instance = instance
         self.streams_to_procs = streams_to_procs
         self.receivers = []
+        self.cove = Cove()
      
     def create_router(self, stream, proc_list):
         def router(msg):
@@ -28,7 +29,7 @@ class ExternalReceiver(mp.Process):
             # create a process using cove.receive to get messages
             # from the rabbitmq queue for each incoming stream pushed to
             # the appropriate process in-queue (proc.iq)
-            self.receivers.append(mp.Process(target=cove.receive, 
+            self.receivers.append(mp.Process(target=self.cove.receive, 
                                        args=(stream, self.create_router(stream, proc_list))))
             self.receivers[-1].start()
 {% endif %}
