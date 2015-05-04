@@ -38,10 +38,13 @@ def receive(q_name, callback):
                        queue=q_name,
                        routing_key=q_name)
 
-    while True:
-        result = channel.basic_get(queue=q_name, no_ack=False)
-        if not result:
-            break
+    for method_frame, properties, body in channel.consume(q_name):
+        # Display the message parts
+        print method_frame
+        print properties
+        print body
 
-        callback(unpack(result['body']))
-        channel.basic_ack(result['method']['delivery_tag'])
+        # Acknowledge the message
+        channel.basic_ack(method_frame.delivery_tag)
+
+        callback(unpack(body))
