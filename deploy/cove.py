@@ -39,7 +39,7 @@ class Cove(object):
                            queue=q_name,
                            routing_key=q_name)
 
-        for method_frame, properties, body in channel.consume(q_name):
+        for method_frame, properties, body in self.channel.consume(q_name):
             # Display the message parts
             print method_frame
             print properties
@@ -48,4 +48,4 @@ class Cove(object):
             # Acknowledge the message
             self.channel.basic_ack(method_frame.delivery_tag)
 
-            callback(msgpack.unpackb(message, use_list=False))
+            callback(msgpack.unpackb(body, use_list=False))
