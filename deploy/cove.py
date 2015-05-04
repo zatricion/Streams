@@ -30,6 +30,11 @@ def send(q_name, message):
 
 def receive(q_name, callback):
     channel.queue_declare(queue=q_name)
+    
+    # TODO: find a better way than unbind,bind
+    channel.queue_unbind(exchange='amq.direct',
+                         queue=q_name,
+                         routing_key=q_name)
     channel.queue_bind(exchange='amq.direct',
                        queue=q_name,
                        routing_key=q_name)
