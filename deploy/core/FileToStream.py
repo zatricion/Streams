@@ -51,7 +51,7 @@ class FileToStream(object):
                 try:
                     self.output_stream.append(self.input.next())
                 except StopIteration:
-                    self.output_stream.close()
+                    # self.output_stream.close()
                     self.eof = True
                     break
         else:
@@ -94,5 +94,5 @@ class JSONFileToStream(object):
         while self.input_list_ptr < len(self.input_list):
             self.output_stream.append(self.input_list[self.input_list_ptr])
             self.input_list_ptr += 1
-        self.output_stream.close()
+        # self.output_stream.close()
         self.eof = True
