@@ -1,5 +1,6 @@
 import pika
 import msgpack
+import time
 
 credentials = pika.PlainCredentials('peter', 'rabbit')
 parameters = pika.ConnectionParameters(host='localhost',
@@ -11,9 +12,13 @@ class Cove(object):
     def __init__(self):
         self.conn = pika.BlockingConnection(parameters)
         self.channel = self.conn.channel()
+        self.queues = []
 
     def send(self, q_name, message):
-        self.channel.queue_declare(queue=q_name)
+        if q_name not in self.queues:
+            self.channel.queue_declare(queue=q_name)
+            self.queues.append(q_name)
+            time.sleep(2)
 
         self.channel.basic_publish(exchange='',
                                    routing_key=q_name,
@@ -23,7 +28,10 @@ class Cove(object):
 
     def receive(self, q_name, callback):
         print "receive from", q_name
-        self.channel.queue_declare(queue=q_name)
+        if q_name not in self.queues:
+            self.channel.queue_declare(queue=q_name)
+            self.queues.append(q_name)
+            time.sleep(2)
 
         for method_frame, properties, body in self.channel.consume(q_name):
             # Acknowledge the message
