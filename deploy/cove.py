@@ -17,7 +17,8 @@ class Cove(object):
 
         self.channel.basic_publish(exchange='',
                                    routing_key=q_name,
-                                   body=msgpack.packb(message))
+                                   body=str(message))
+                                   # body=msgpack.packb(message))
 
     def receive(self, q_name, callback):
         self.channel.queue_declare(queue=q_name)
@@ -26,4 +27,5 @@ class Cove(object):
             # Acknowledge the message
             self.channel.basic_ack(method_frame.delivery_tag)
 
-            callback(msgpack.unpackb(body, use_list=False))
+            callback(body)
+            # callback(msgpack.unpackb(body, use_list=False))
