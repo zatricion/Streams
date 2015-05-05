@@ -29,7 +29,8 @@ class ExternalReceiver(mp.Process):
             # create a process using cove.receive to get messages
             # from the rabbitmq queue for each incoming stream pushed to
             # the appropriate process in-queue (proc.iq)
-            self.receivers.append(mp.Process(target=self.cove.receive, 
+            self.receivers.append(mp.Process(name=stream+'_cove',
+                                       target=self.cove.receive, 
                                        args=(stream, self.create_router(stream, proc_list))))
             self.receivers[-1].start()
 {% endif %}
