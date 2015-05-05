@@ -12,12 +12,12 @@ class Cove(object):
     def __init__(self):
         self.conn = pika.BlockingConnection(parameters)
         self.channel = self.conn.channel()
-        self.queues = []
+        self.queues = set()
 
     def send(self, q_name, message):
         if q_name not in self.queues:
             self.channel.queue_declare(queue=q_name)
-            self.queues.append(q_name)
+            self.queues.add(q_name)
             time.sleep(2)
 
         self.channel.basic_publish(exchange='',
@@ -30,7 +30,7 @@ class Cove(object):
         print "receive from", q_name
         if q_name not in self.queues:
             self.channel.queue_declare(queue=q_name)
-            self.queues.append(q_name)
+            self.queues.add(q_name)
             time.sleep(2)
 
         for method_frame, properties, body in self.channel.consume(q_name):
