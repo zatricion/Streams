@@ -27,12 +27,12 @@ agent TimesSeven {
         main
     }
     output_streams {
-        out0
+        sevenx
     }
 }
 
 agent PlusPointThree {
-    process: p2
+    process: p3
     type: anomaly
     function: list_operator
     parameters {

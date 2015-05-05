@@ -15,36 +15,14 @@ class Cove(object):
     def send(self, q_name, message):
         self.channel.queue_declare(queue=q_name)
 
-        # TODO: find a better way than unbind,bind
-        self.channel.queue_unbind(exchange='amq.direct',
-                             queue=q_name,
-                             routing_key=q_name)
-
-        self.channel.queue_bind(exchange='amq.direct',
-                           queue=q_name,
-                           routing_key=q_name)
-
-        self.channel.basic_publish(exchange='amq.direct',
-                              routing_key=q_name,
-                              body=msgpack.packb(message))
+        self.channel.basic_publish(exchange='',
+                                   routing_key=q_name,
+                                   body=msgpack.packb(message))
 
     def receive(self, q_name, callback):
         self.channel.queue_declare(queue=q_name)
 
-        # TODO: find a better way than unbind,bind
-        self.channel.queue_unbind(exchange='amq.direct',
-                             queue=q_name,
-                             routing_key=q_name)
-        self.channel.queue_bind(exchange='amq.direct',
-                           queue=q_name,
-                           routing_key=q_name)
-
         for method_frame, properties, body in self.channel.consume(q_name):
-            # Display the message parts
-#             print method_frame
-#             print properties
-#             print body
-
             # Acknowledge the message
             self.channel.basic_ack(method_frame.delivery_tag)
 
