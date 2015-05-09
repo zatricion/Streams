@@ -2,16 +2,17 @@ import time
 from fabric.api import *
 import fabric.contrib.files as fabfiles
 
-RABBITMQ_USER = 'peter'
+RABBITMQ_USER = 'peter1'
 RABBITMQ_PASS = 'rabbit'
-RABBITMQ_VHOST = 'potter'
-RABBITMQ_PORT = 7000
+RABBITMQ_VHOST = 'potter1'
+RABBITMQ_PORT = 7001
 
 HOSTS = 'hosts_ipv4.txt'
 env.forward_agent = True
 env.key_filename = '~/.ssh/streams_deploy'
 env.abort_on_prompts = True
 env.hostnames = {}
+env.addrs = {}
 
 def populate_hosts():
     for line in open(HOSTS, 'r'):
@@ -20,6 +21,8 @@ def populate_hosts():
             env.hosts.append(host)
             env.passwords[host+':22'] = password
             env.hostnames[host.split('@')[1]] = name
+            print env.hostnames
+            env.addrs[name] = host
          
 @task
 def update():
@@ -46,17 +49,14 @@ def clone_deploy():
         sudo('apt-get install -y python-dev')
 
 @task
-def get_rabbitmq():       
+def set_rabbit():       
     sudo('apt-get install -y rabbitmq-server')
-    sudo('rabbitmq-server -detached')
+    # sudo('rabbitmq-server -detached')
+    sudo('rabbitmqctl start_app')
     time.sleep(20)
     sudo('rabbitmq-plugins enable rabbitmq_management')
     sudo('rabbitmq-plugins enable rabbitmq_federation')
     sudo('rabbitmq-plugins enable rabbitmq_federation_management')
-
-
-@task
-def start_rabbit():
     sudo('rabbitmqctl add_user {0} {1}'.format(RABBITMQ_USER, RABBITMQ_PASS))
     sudo('rabbitmqctl set_user_tags {0} administrator'.format(RABBITMQ_USER))
     sudo('rabbitmqctl add_vhost {0}'.format(RABBITMQ_VHOST))
@@ -64,41 +64,43 @@ def start_rabbit():
                                                                            RABBITMQ_USER))
     sudo('sudo rabbitmqctl set_permissions -p {0} {1} ".*" ".*" ".*"'.format(RABBITMQ_VHOST, 
                                                                            RABBITMQ_USER))
-                                                                               
-    # sudo('rabbitmqctl set_policy federate-me \'^amq\.\' \'{"federation-upstream-set":"all"}\'')
+
+@task
+def federate_rabbit():
+    sudo("rabbitmqctl set_policy -p {0} --apply-to queues federate-me '.+' '{{\"federation-upstream-set\":\"all\"}}'".format(RABBITMQ_VHOST))
     
- #    hosts = []
-#     for name in env.hosts:
-#         pass # TODO: use this to set upstreams
-    sudo("rabbitmqctl set_policy federate-me '^amq\.' {0} '{1}'".format("localhost", #"{\"uri\" : \"amqp://10.0.1.12\"}"))
-    
-                                                                          {"uri": "amqp://{0}:{1}@{2}:{3}/{4}".format(RABBITMQ_USER,
-                                                                                                                      RABBITMQ_PASS,
-                                                                                                                      "67.160.0.6",
-                                                                                                                      RABBITMQ_PORT,
-                                                                                                                      RABBITMQ_VHOST
-                                                                                                                      )}))
+    for host in env.hosts:
+        ip_addr = host.split('@')[1]
+        if ip_addr == env.host: continue # don't add yourself as an upstream
+        
+        upstream =  '{{"uri": "amqp://{0}:{1}@{2}:{3}/{4}"}}'.format(RABBITMQ_USER,
+                                                                   RABBITMQ_PASS,
+                                                                   ip_addr,
+                                                                   RABBITMQ_PORT,
+                                                                   RABBITMQ_VHOST
+                                                                   )
+        sudo("rabbitmqctl set_parameter federation-upstream {0} '{1}' ".format(env.hostnames[ip_addr], upstream))
 
 @task
 def kill_rabbit():
-    # sudo('rabbitmqctl delete_user {0}'.format(RABBITMQ_USER))
-#     sudo('rabbitmqctl delete_vhost {0}'.format(RABBITMQ_VHOST))
-    # sudo('rabbitmqctl stop')
+    sudo('rabbitmqctl delete_user {0}'.format(RABBITMQ_USER))
+    sudo('rabbitmqctl delete_vhost {0}'.format(RABBITMQ_VHOST))
     with lcd('../deploy/'):
         local('kill -9 `cat twistd.pid`')
 
  
 def main():
-  populate_hosts()
-  
   # update system's default application toolset
-  execute(update)
+  #execute(update)
 
   # Clone the repo and switch to deployment branch
-  execute(clone_deploy)
+  #execute(clone_deploy)
 
+  #execute(kill_rabbit)
   # Start rabbitmq
-  execute(start_rabbit)
+  execute(set_rabbit)
+  execute(federate_rabbit)
 
 if __name__ == '__main__':
+  populate_hosts()
   main()

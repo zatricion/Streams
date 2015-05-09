@@ -13,10 +13,16 @@ def bootstrapDone(found, server):
     sp.call(["python", "start_network.py"])
 
 def makeService(config):
+    bootstrap_addr = config["bootstrap"]
+    port = int(config["port"])
+    
     kserver = Server()
-    kserver.bootstrap([(config["bootstrap"], int(config["port"]))]).addCallback(bootstrapDone, kserver).addErrback(bootstrapDone, kserver)
 
-    return internet.UDPServer(7000, kserver.protocol)
+    if boostrap_addr is not None:
+        bootstrap_tuple = (bootstrap_addr, port)
+        kserver.bootstrap([bootstrap_tuple]).addCallback(bootstrapDone, kserver)
+
+    return internet.UDPServer(port, kserver.protocol)
 
 if __name__ == "__main__":
     sp.call(["python", "start_network.py"])

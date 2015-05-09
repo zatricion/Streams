@@ -5,7 +5,7 @@ import fabric.contrib.files as fabfiles
 RABBITMQ_USER = 'peter'
 RABBITMQ_PASS = 'rabbit'
 RABBITMQ_VHOST = 'potter'
-RABBITMQ_PORT = 7000
+RABBITMQ_PORT = 7001
 
 HOSTS = 'hosts_ipv4.txt'
 env.forward_agent = True
@@ -25,9 +25,6 @@ def populate_hosts():
 
 @task
 def deploy_streams():
-    print env.hostnames
-    print env.addrs["ChenPi"]
-
     if not fabfiles.exists('Streams'):
         run('git clone git@github.com:zatricion/Streams.git')
         with cd('Streams'):
@@ -58,10 +55,10 @@ def create_local_node(port=None):
  
 def main():
   # Get the repo
-  # execute(deploy_streams)
+  execute(deploy_streams)
 
   # start temporary kademlia node
-  # create_local_node(RABBITMQ_PORT)
+  create_local_node(RABBITMQ_PORT)
 
   # get local ipv4 address for bootstrapping (deploying from macbook)
   my_ipv4 = local('ipconfig getifaddr en0', capture=True)
