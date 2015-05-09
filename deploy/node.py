@@ -18,7 +18,7 @@ def makeService(config):
     
     kserver = Server()
 
-    if boostrap_addr is not None:
+    if bootstrap_addr is not None:
         bootstrap_tuple = (bootstrap_addr, port)
         kserver.bootstrap([bootstrap_tuple]).addCallback(bootstrapDone, kserver)
 
