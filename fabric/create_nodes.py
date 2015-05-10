@@ -2,9 +2,9 @@ import time
 from fabric.api import *
 import fabric.contrib.files as fabfiles
 
-RABBITMQ_USER = 'peter1'
+RABBITMQ_USER = 'peter'
 RABBITMQ_PASS = 'rabbit'
-RABBITMQ_VHOST = 'potter1'
+RABBITMQ_VHOST = 'potter'
 RABBITMQ_PORT = 7001
 
 HOSTS = 'hosts_ipv4.txt'
@@ -13,6 +13,7 @@ env.key_filename = '~/.ssh/streams_deploy'
 env.abort_on_prompts = True
 env.hostnames = {}
 env.addrs = {}
+env.warn_only=True
 
 def populate_hosts():
     for line in open(HOSTS, 'r'):
@@ -21,7 +22,6 @@ def populate_hosts():
             env.hosts.append(host)
             env.passwords[host+':22'] = password
             env.hostnames[host.split('@')[1]] = name
-            print env.hostnames
             env.addrs[name] = host
          
 @task
@@ -51,9 +51,9 @@ def clone_deploy():
 @task
 def set_rabbit():       
     sudo('apt-get install -y rabbitmq-server')
-    # sudo('rabbitmq-server -detached')
-    sudo('rabbitmqctl start_app')
+    sudo('rabbitmq-server -detached')
     time.sleep(20)
+    sudo('rabbitmqctl start_app')
     sudo('rabbitmq-plugins enable rabbitmq_management')
     sudo('rabbitmq-plugins enable rabbitmq_federation')
     sudo('rabbitmq-plugins enable rabbitmq_federation_management')
@@ -73,13 +73,12 @@ def federate_rabbit():
         ip_addr = host.split('@')[1]
         if ip_addr == env.host: continue # don't add yourself as an upstream
         
-        upstream =  '{{"uri": "amqp://{0}:{1}@{2}:{3}/{4}"}}'.format(RABBITMQ_USER,
+        upstream =  '{{"uri": "amqp://{0}:{1}@{2}/{3}"}}'.format(RABBITMQ_USER,
                                                                    RABBITMQ_PASS,
                                                                    ip_addr,
-                                                                   RABBITMQ_PORT,
                                                                    RABBITMQ_VHOST
                                                                    )
-        sudo("rabbitmqctl set_parameter federation-upstream {0} '{1}' ".format(env.hostnames[ip_addr], upstream))
+        sudo("rabbitmqctl set_parameter -p {0} federation-upstream {1} '{2}' ".format(RABBITMQ_VHOST, env.hostnames[ip_addr], upstream))
 
 @task
 def kill_rabbit():
@@ -91,12 +90,11 @@ def kill_rabbit():
  
 def main():
   # update system's default application toolset
-  #execute(update)
+  execute(update)
 
   # Clone the repo and switch to deployment branch
-  #execute(clone_deploy)
+  execute(clone_deploy)
 
-  #execute(kill_rabbit)
   # Start rabbitmq
   execute(set_rabbit)
   execute(federate_rabbit)

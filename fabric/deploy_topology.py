@@ -2,10 +2,12 @@ import time
 from fabric.api import *
 import fabric.contrib.files as fabfiles
 
-RABBITMQ_USER = 'peter'
+RABBITMQ_USER = 'peter1'
 RABBITMQ_PASS = 'rabbit'
 RABBITMQ_VHOST = 'potter'
 RABBITMQ_PORT = 7001
+
+KADEMLIA_PORT = 50105
 
 HOSTS = 'hosts_ipv4.txt'
 env.forward_agent = True
@@ -33,11 +35,11 @@ def deploy_streams():
         with cd('Streams'):
             run('git fetch --all')
             run('git reset --hard origin/deployment')
-            sudo('pip install -r requirements.txt')
+            # sudo('pip install -r requirements.txt')
         
-        with cd('Streams/deploy'):
-            ## TODO: allow specification of a real config file
-            run('python runAnomaly.py deploy_test.any deploy_test.config {0}'.format(env.hostnames[env.host]))
+    with cd('Streams/deploy'):
+        ## TODO: allow specification of a real config file
+        run('python runAnomaly.py deploy_test.any deploy_test.config {0}'.format(env.hostnames[env.host]))
 
 @task
 def start_kademlia(ip, port=None):
@@ -54,18 +56,18 @@ def create_local_node(port=None):
         local('twistd -l deploy_test.log node')
  
 def main():
-  # Get the repo
-  execute(deploy_streams)
-
   # start temporary kademlia node
-  create_local_node(RABBITMQ_PORT)
+  create_local_node(KADEMLIA_PORT)
 
   # get local ipv4 address for bootstrapping (deploying from macbook)
   my_ipv4 = local('ipconfig getifaddr en0', capture=True)
+  
+  # Get the repo
+  execute(deploy_streams)
 
   # start Kademlia network
-  execute(start_kademlia, my_ipv4, RABBITMQ_PORT, hosts=env.addrs["ChenPi"]) 
-  execute(start_kademlia_verbose, my_ipv4, RABBITMQ_PORT, hosts=env.addrs["rpi0"]) 
+  execute(start_kademlia, my_ipv4, KADEMLIA_PORT, hosts=env.addrs["ChenPi"]) 
+  execute(start_kademlia_verbose, my_ipv4, KADEMLIA_PORT, hosts=env.addrs["rpi0"]) 
 
 
 if __name__ == '__main__':
