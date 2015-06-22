@@ -8,9 +8,13 @@ from kademlia.network import Server
 from kademlia import log
 
 import subprocess as sp
+from nodeManager import NodeManager
+import json
 
 def bootstrapDone(found, server):
-    sp.call(["python", "start_network.py"])
+    # sp.call(["python", "start_network.py"])
+    manager = NodeManager(server)
+    manager.start()
 
 def makeService(config):
     bootstrap_addr = config["bootstrap"]
@@ -21,6 +25,10 @@ def makeService(config):
     if bootstrap_addr is not None:
         bootstrap_tuple = (bootstrap_addr, port)
         kserver.bootstrap([bootstrap_tuple]).addCallback(bootstrapDone, kserver)
+    
+    else:
+        with open('../deploy/deploy_test.config', 'r') as f:
+            kserver.set('deploy_config', f.read())
 
     return internet.UDPServer(port, kserver.protocol)
 
