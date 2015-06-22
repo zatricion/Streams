@@ -2,7 +2,8 @@ from multiprocessing import Process
 import subprocess as sp
 
 def printer(res):
-    print res
+    with open('deploy_test.config', 'w') as f:
+        f.write(res + 'hi')
     
 class NodeManager(Process):
     """
