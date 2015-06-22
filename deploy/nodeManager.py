@@ -12,6 +12,9 @@ class NodeManager(Process):
             self.hostname = f.read()
     
     def run(self):
-        print self.server.get('deploy_config')
+        self.server.get('deploy_config').addCallback(self.printer)
         sp.call(["python", "runAnomaly.py", "deploy_test.any", "deploy_test.config", self.hostname])
-        sp.call(["python", "start_network.py"])
+        # sp.call(["python", "start_network.py"])
+        
+    def printer(self, res):
+        print res
