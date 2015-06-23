@@ -1,5 +1,6 @@
 from multiprocessing import Process
 import subprocess as sp
+import time
 
 def printer(res):
     with open('deploy_test.config', 'w') as f:
@@ -17,6 +18,7 @@ class NodeManager(Process):
     
     def run(self):
         print "lalalala"
+        time.sleep(5)
         self.server.get('deploy_config').addCallback(printer)
         # sp.call(["python", "runAnomaly.py", "deploy_test.any", "deploy_test.config", self.hostname])
         # sp.call(["python", "start_network.py"])
