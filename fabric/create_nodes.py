@@ -9,7 +9,7 @@ RABBITMQ_PORT = 7001
 
 HOSTS = 'hosts_ipv4.txt'
 env.forward_agent = True
-env.key_filename = '~/.ssh/streams_deploy'
+env.key_filename = '~/.ssh/id_rsa'
 env.abort_on_prompts = True
 env.hostnames = {}
 env.addrs = {}
@@ -20,7 +20,7 @@ def populate_hosts():
         if line.strip() and not line.startswith('#'):
             name, host, password = line.split()
             env.hosts.append(host)
-            env.passwords[host+':22'] = password
+            # env.passwords[host+':22'] = password
             env.hostnames[host.split('@')[1]] = name
             env.addrs[name] = host
          
@@ -47,10 +47,13 @@ def clone_deploy():
         
         # get python development tools
         sudo('apt-get install -y python-dev')
+        
+        # get gcc
+        sudo('apt-get install -y gcc')
 
 @task
 def set_rabbit():       
-    sudo('apt-get install -y rabbitmq-server')
+    sudo('apt-get install -y --force-yes rabbitmq-server')
     sudo('rabbitmq-server -detached')
     time.sleep(20)
     sudo('rabbitmqctl start_app')
