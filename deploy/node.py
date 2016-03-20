@@ -18,6 +18,7 @@ def printer(res):
     print "right"
     
 def bootstrapDone(found, server, port):
+    raise Exception("bootstrapDone called")
     logging.info("attempting to set deploy config")
     with open('../deploy/deploy_test.config', 'r') as f:
         server.set('deploy_config', f.read()).addCallback(printer) 
