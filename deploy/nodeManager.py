@@ -20,4 +20,4 @@ class NodeManager(Process):
         # print "not doing anything"
         # self.server.get('deploy_config').addCallback(printer)
         # sp.call(["python", "runAnomaly.py", "deploy_test.any", "deploy_test_written.config", self.hostname])
-        sp.call(["python", "start_network.py"])
+        sp.call(["python", "start_network.py", ">", "stream.log"])
