@@ -21,4 +21,5 @@ class NodeManager(Process):
         # self.server.get('deploy_config').addCallback(printer)
         print "running network"
         sp.call(["python", "runAnomaly.py", "deploy_test.any", "deploy_test.config", self.hostname])
-        sp.call(["python", "start_network.py", ">", "stream.log"])
+        with open('stream.log', 'w') as f:
+            sp.call(["python", "start_network.py"], stdout=f, stderr=sp.STDOUT)
