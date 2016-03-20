@@ -13,18 +13,10 @@ from nodeManager import NodeManager
 import json
 
 logger = Logger()
-
-def printer(res):
-    print res
-    print "right"
     
 def bootstrapDone(found, server):
-    with open('../deploy/TEST.txt', 'w') as f:
-        f.write("Testing")
-
-    twisted.python.log.msg("attempting to set deploy config")
     with open('../deploy/deploy_test.config', 'r') as f:
-        server.set('deploy_config', f.read()).addCallback(printer) 
+        server.set('deploy_config', f.read())
     logger.info("starting NodeMananger")
     manager = NodeManager(server)
     manager.start()
@@ -35,7 +27,6 @@ def makeService(config):
     
     kserver = Server()
     
-    twisted.python.log.msg("starting service")
     if bootstrap_addr is not None:
         bootstrap_tuple = (bootstrap_addr, port)
         kserver.bootstrap([bootstrap_tuple]).addCallback(bootstrapDone, kserver)

@@ -3,7 +3,7 @@ import subprocess as sp
 import time
 
 def printer(res):
-    with open('deploy_test.config', 'w') as f:
+    with open('deploy_test_written.config', 'w') as f:
         f.write(res + 'hi')
     
 class NodeManager(Process):
@@ -17,9 +17,6 @@ class NodeManager(Process):
             self.hostname = f.read()
     
     def run(self):
-        print "lalalala"
-        time.sleep(5)
-        printer("testing")
         self.server.get('deploy_config').addCallback(printer)
-        # sp.call(["python", "runAnomaly.py", "deploy_test.any", "deploy_test.config", self.hostname])
+        # sp.call(["python", "runAnomaly.py", "deploy_test.any", "deploy_test_written.config", self.hostname])
         # sp.call(["python", "start_network.py"])
