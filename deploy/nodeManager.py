@@ -14,7 +14,7 @@ class NodeManager(Process):
         super(NodeManager, self).__init__()
         self.server = server
         with open('hostname.txt', 'r') as f:
-            self.hostname = f.readline()
+            self.hostname = f.read().rstrip('\n')
     
     def run(self):
         # print "not doing anything"
