@@ -19,5 +19,6 @@ class NodeManager(Process):
     def run(self):
         # print "not doing anything"
         # self.server.get('deploy_config').addCallback(printer)
-        # sp.call(["python", "runAnomaly.py", "deploy_test.any", "deploy_test_written.config", self.hostname])
+        print "running network"
+        sp.call(["python", "runAnomaly.py", "deploy_test.any", "deploy_test.config", self.hostname])
         sp.call(["python", "start_network.py", ">", "stream.log"])
