@@ -19,6 +19,7 @@ class NodeManager(Process):
     def run(self):
         print "lalalala"
         time.sleep(5)
+        printer("testing")
         self.server.get('deploy_config').addCallback(printer)
         # sp.call(["python", "runAnomaly.py", "deploy_test.any", "deploy_test.config", self.hostname])
         # sp.call(["python", "start_network.py"])
