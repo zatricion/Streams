@@ -4,7 +4,7 @@ import time
 
 def printer(res):
     with open('deploy_test_written.config', 'w') as f:
-        f.write(res + 'hi')
+        f.write(res)
     
 class NodeManager(Process):
     """
