@@ -15,7 +15,7 @@ def printer(res):
     print res
     print "right"
     
-def bootstrapDone(found, server, port):
+def bootstrapDone(found, server):
     raise Exception("bootstrapDone called")
     log.msg("attempting to set deploy config")
     with open('../deploy/deploy_test.config', 'r') as f:
