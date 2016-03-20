@@ -21,7 +21,7 @@ def bootstrapDone(found, server, port):
     log.info("attempting to set deploy config")
     with open('../deploy/deploy_test.config', 'r') as f:
         server.set('deploy_config', f.read()).addCallback(printer) 
-    log.info("starting NodeMananger"
+    log.info("starting NodeMananger")
     manager = NodeManager(server)
     manager.start()
 
