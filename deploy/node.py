@@ -17,10 +17,10 @@ def printer(res):
     
 def bootstrapDone(found, server, port):
     raise Exception("bootstrapDone called")
-    log.info("attempting to set deploy config")
+    log.msg("attempting to set deploy config")
     with open('../deploy/deploy_test.config', 'r') as f:
         server.set('deploy_config', f.read()).addCallback(printer) 
-    log.info("starting NodeMananger")
+    log.msg("starting NodeMananger")
     manager = NodeManager(server)
     manager.start()
 
@@ -30,7 +30,7 @@ def makeService(config):
     
     kserver = Server()
     
-    log.info("starting service")
+    log.msg("starting service")
     if bootstrap_addr is not None:
         bootstrap_tuple = (bootstrap_addr, port)
         kserver.bootstrap([bootstrap_tuple]).addCallback(bootstrapDone, kserver)
