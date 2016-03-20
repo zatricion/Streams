@@ -1,6 +1,8 @@
 from twisted.application import service, internet
 from twisted.python.log import ILogObserver
 from twisted.internet import reactor, task
+from twisted.logger import Logger
+log = Logger()
 
 import sys, os
 sys.path.append(os.path.dirname(__file__))
@@ -16,8 +18,10 @@ def printer(res):
     print "right"
     
 def bootstrapDone(found, server, port):
+    log.info("attempting to set deploy config")
     with open('../deploy/deploy_test.config', 'r') as f:
-        server.set('deploy_config', f.read()).addCallback(printer)
+        server.set('deploy_config', f.read()).addCallback(printer) 
+    log.info("starting NodeMananger"
     manager = NodeManager(server)
     manager.start()
 
