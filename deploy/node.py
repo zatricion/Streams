@@ -9,7 +9,7 @@ from kademlia.network import Server
 from kademlia.log import Logger
 
 import subprocess as sp
-from nodeManager import NodeManager
+# from nodeManager import NodeManager
 import json
 
 logger = Logger()
