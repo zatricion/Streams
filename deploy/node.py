@@ -22,7 +22,7 @@ def bootstrapDone(found, server):
     # manager = NodeManager(server)
     # manager.start()
     # http://twistedmatrix.com/documents/current/core/howto/process.html
-    utils.getProcessValue('python', ['start_network.py'])
+    utils.getProcessValue('python', ['start_network.py', '>streams.log'])
 
 def makeService(config):
     bootstrap_addr = config["bootstrap"]
