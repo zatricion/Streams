@@ -48,20 +48,20 @@ def deploy_streams():
 def start_kademlia(ip, port=None):
     with cd('Streams/deploy/'):
         with settings(warn_only=True):
-            run('kill `cat twistd.pid`')
+            run('pkill -9 twistd')
         run('twistd -l deploy_test.log node -b {0} -p {1}'.format(ip, port))
 
 @task
 def start_kademlia_verbose(ip, port=None):
     with cd('Streams/deploy/'):
         with settings(warn_only=True):
-            run('kill `cat twistd.pid`')
+            run('pkill -9 twistd')
         run('twistd -n node -b {0} -p {1}'.format(ip, port))
         
 def create_local_node(port=None):
     with lcd('../deploy/'):
         with settings(warn_only=True):
-            local('kill `cat twistd.pid`')
+            local('kill -9 `cat twistd.pid`')
         local('twistd -l deploy_test.log node -p {0}'.format(port))
 
 def kill_local_node():
@@ -80,7 +80,7 @@ def main():
 
   # start Kademlia network
   execute(start_kademlia, env.ipaddrs["rpi1"], KADEMLIA_PORT, hosts=env.addrs["rpi0"]) 
-  execute(start_kademlia, env.ipaddrs["rpi0"], KADEMLIA_PORT, hosts=env.addrs["rpi1"]) 
+  execute(start_kademlia_verbose, env.ipaddrs["rpi0"], KADEMLIA_PORT, hosts=env.addrs["rpi1"]) 
 
 if __name__ == '__main__':
   populate_hosts()

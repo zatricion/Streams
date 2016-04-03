@@ -1,5 +1,3 @@
-from multiprocessing import Process
-import subprocess as sp
 import time
 
 def printer(res):

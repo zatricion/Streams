@@ -1,6 +1,6 @@
 from twisted.application import service, internet
 from twisted.python.log import ILogObserver
-from twisted.internet import reactor, task
+from twisted.internet import reactor, task, utils
 import twisted
 
 import sys, os
@@ -18,8 +18,11 @@ def bootstrapDone(found, server):
     with open('../deploy/deploy_test.config', 'r') as f:
         server.set('deploy_config', f.read())
     logger.info("starting NodeMananger")
-    manager = NodeManager(server)
-    manager.start()
+    # Have to user Twisted method for starting processes
+    # manager = NodeManager(server)
+    # manager.start()
+    # http://twistedmatrix.com/documents/current/core/howto/process.html
+    utils.getProcessValue('python', ['start_network.py'])
 
 def makeService(config):
     bootstrap_addr = config["bootstrap"]
